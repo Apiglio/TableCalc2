@@ -1,0 +1,8 @@
+/lib
+/his
+/backup
+/test_file
+*.exe
+*.json
+*.csv
+*.txt
