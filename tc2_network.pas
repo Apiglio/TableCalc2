@@ -19,6 +19,55 @@ type
 
   ConnectedError=class(Exception);
 
+
+  TLabelTypeNode = (ltnNone, ltnID, ltnName, ltnGroup, ltnResult);
+  TLabelTypeEdge = (lteNone, lteID, lteWeight, lteFrequency);
+  TLabelTypeActor = (ltaNone);
+  TLabelTypeOD = (ltoNone);
+
+  TPaintOption = record
+    Node:record
+      Shown:boolean;
+      LabelOption:record
+        Enabled:boolean;
+        LabelType:TLabelTypeNode;
+      end;
+      SizeOption:record
+        scale:double;
+      end;
+    end;
+    Edge:record
+      Shown:boolean;
+      ShowArrow:boolean;
+      LabelOption:record
+        Enabled:boolean;
+        LabelType:TLabelTypeEdge;
+      end;
+      WidthOption:record
+        scale:double;
+      end;
+    end;
+    Actor:record
+      Shown:boolean;
+      LabelOption:record
+        Enabled:boolean;
+        LabelType:TLabelTypeActor;
+      end;
+    end;
+    OD:record
+      Shown:boolean;
+      ShowArrow:boolean;
+      LabelOption:record
+        Enabled:boolean;
+        LabelType:TLabelTypeOD;
+      end;
+    end;
+    Bound:record
+      Top,Left,Right,Bottom:double;
+    end;
+  end;
+
+
   TTC2_Edge=class;
   TTC2_Node=class
   public
@@ -233,8 +282,15 @@ type
 
   end;
 
+  function is_na(value:double):boolean;
+
 implementation
 uses tc2_mainform;
+
+function is_na(value:double):boolean;
+begin
+  if (value=MAX_DOUBLE) or (value=MIN_DOUBLE) then result:=true else result:=false;
+end;
 
 procedure Debugln(str:string);
 begin

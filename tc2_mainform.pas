@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  ComCtrls, StdCtrls, Spin, Grids, LazUTF8, SpinEx, Apiglio_Useful,
+  ComCtrls, StdCtrls, Spin, Grids, Menus, LazUTF8, SpinEx, Apiglio_Useful,
   aufscript_frame, auf_ram_var, tc2_network, Types;
 
 const NA:double=$7fffffffffffffff;
@@ -19,10 +19,10 @@ type
     Button_Export_SG: TButton;
     CheckBox_ShowODs: TCheckBox;
     CheckBox_ShowNodes: TCheckBox;
-    CheckBox_EdgeLabel: TCheckBox;
-    CheckBox_NodeLabel: TCheckBox;
-    CheckBox_ActorLabel: TCheckBox;
-    CheckBox_ShowArrow: TCheckBox;
+    CheckBox_ShowEdgeLabel: TCheckBox;
+    CheckBox_ShowNodeLabel: TCheckBox;
+    CheckBox_ShowActorLabel: TCheckBox;
+    CheckBox_ShowEdgeArrow: TCheckBox;
     CheckBox_ShowEdges: TCheckBox;
     CheckBox_ShowActors: TCheckBox;
     Edit_ExportName: TEdit;
@@ -36,7 +36,41 @@ type
     Label_EdgeWidth: TLabel;
     Label_NodeSize: TLabel;
     Label_LayoutOpt: TLabel;
+    MainMenu1: TMainMenu;
+    MenuItem_Layout_Geo: TMenuItem;
+    MenuItem_Layout_Loop: TMenuItem;
+    MenuItem_Layout_Random: TMenuItem;
+    MenuItem_Layout: TMenuItem;
+    MenuItem_Network_disweight: TMenuItem;
+    MenuItem_Network_WeightReverse: TMenuItem;
+    MenuItem_Network_indirect: TMenuItem;
+    MenuItem_Network_div02: TMenuItem;
+    MenuItem_Network_ExportGeoJSON: TMenuItem;
+    MenuItem_Network_ExportEdgelist: TMenuItem;
+    MenuItem_Network_ExportAdjacent: TMenuItem;
+    MenuItem_Network_ImportGeoJSON: TMenuItem;
+    MenuItem_Network_ImportEdgelist: TMenuItem;
+    MenuItem_Network_ImportAdjacent: TMenuItem;
+    MenuItem_Network_Export: TMenuItem;
+    MenuItem_Network_Import: TMenuItem;
+    MenuItem_Network_div01: TMenuItem;
+    MenuItem_Calc_CCI: TMenuItem;
+    MenuItem_Calc_Wiener: TMenuItem;
+    MenuItem_Calc_radius: TMenuItem;
+    MenuItem_Calc_diameter: TMenuItem;
+    MenuItem_Calc_density: TMenuItem;
+    MenuItem_Calc_General: TMenuItem;
+    MenuItem_Calc_IRCC: TMenuItem;
+    MenuItem_Calc_BC: TMenuItem;
+    MenuItem_Calc_CC: TMenuItem;
+    MenuItem_Calc_DC: TMenuItem;
+    MenuItem_Calc_Centralities: TMenuItem;
+    MenuItem_Network_genWhat: TMenuItem;
+    MenuItem_Network_genRandom: TMenuItem;
+    MenuItem_Network: TMenuItem;
+    MenuItem_Calc: TMenuItem;
     PageControl_DataView: TPageControl;
+    ScrollBox_PaintOption: TScrollBox;
     ScrollBox_ActorOption: TScrollBox;
     ScrollBox_ODOption: TScrollBox;
     ScrollBox_PaintBox: TScrollBox;
@@ -45,10 +79,9 @@ type
     ScrollBox_NodeOption: TScrollBox;
     PageControl1: TPageControl;
     PaintBox_Net: TPaintBox;
-    RadioGroup_EdgeLabel: TRadioGroup;
-    RadioGroup_NodeLabel: TRadioGroup;
+    RadioGroup_EdgeLabelType: TRadioGroup;
+    RadioGroup_NodeLabelType: TRadioGroup;
     Splitter: TSplitter;
-    Splitter_Auto: TSplitter;
     StringGrid_DV_Node: TStringGrid;
     StringGrid_DV_Edge: TStringGrid;
     StringGrid_DV_Actor: TStringGrid;
@@ -63,17 +96,42 @@ type
     TrackBar_Zone: TTrackBar;
     TrackBar_Alpha: TTrackBar;
     procedure Button_Export_SGClick(Sender: TObject);
-    procedure CheckBox_EdgeLabelClick(Sender: TObject);
-    procedure CheckBox_NodeLabelClick(Sender: TObject);
-    procedure CheckBox_ShowArrowClick(Sender: TObject);
+    procedure Button_runClick(Sender: TObject);
+    procedure CheckBox_ShowActorLabelClick(Sender: TObject);
+    procedure CheckBox_ShowEdgeLabelClick(Sender: TObject);
+    procedure CheckBox_ShowNodeLabelClick(Sender: TObject);
+    procedure CheckBox_ShowActorsClick(Sender: TObject);
+    procedure CheckBox_ShowEdgeArrowClick(Sender: TObject);
+    procedure CheckBox_ShowEdgesClick(Sender: TObject);
+    procedure CheckBox_ShowNodesClick(Sender: TObject);
+    procedure CheckBox_ShowODsClick(Sender: TObject);
     procedure FloatSpinEdit_EdgeWidthEditingDone(Sender: TObject);
     procedure FloatSpinEdit_NodeSizeEditingDone(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Frame_AufScript1Resize(Sender: TObject);
+    procedure MenuItem_Calc_BCClick(Sender: TObject);
+    procedure MenuItem_Calc_CCClick(Sender: TObject);
+    procedure MenuItem_Calc_CCIClick(Sender: TObject);
+    procedure MenuItem_Calc_DCClick(Sender: TObject);
+    procedure MenuItem_Calc_densityClick(Sender: TObject);
+    procedure MenuItem_Calc_diameterClick(Sender: TObject);
+    procedure MenuItem_Calc_IRCCClick(Sender: TObject);
+    procedure MenuItem_Calc_radiusClick(Sender: TObject);
+    procedure MenuItem_Calc_WienerClick(Sender: TObject);
+    procedure MenuItem_Layout_GeoClick(Sender: TObject);
+    procedure MenuItem_Layout_LoopClick(Sender: TObject);
+    procedure MenuItem_Layout_RandomClick(Sender: TObject);
+    procedure MenuItem_Network_ExportAdjacentClick(Sender: TObject);
+    procedure MenuItem_Network_ExportEdgelistClick(Sender: TObject);
+    procedure MenuItem_Network_ExportGeoJSONClick(Sender: TObject);
+    procedure MenuItem_Network_genRandomClick(Sender: TObject);
+    procedure MenuItem_Network_ImportAdjacentClick(Sender: TObject);
+    procedure MenuItem_Network_ImportEdgelistClick(Sender: TObject);
+    procedure MenuItem_Network_ImportGeoJSONClick(Sender: TObject);
     procedure PaintBox_NetPaint(Sender: TObject);
-    procedure RadioGroup_EdgeLabelClick(Sender: TObject);
-    procedure RadioGroup_NodeLabelClick(Sender: TObject);
+    procedure RadioGroup_EdgeLabelTypeClick(Sender: TObject);
+    procedure RadioGroup_NodeLabelTypeClick(Sender: TObject);
     procedure StringGrid_DV_ActorEnter(Sender: TObject);
     procedure StringGrid_DV_EdgeEnter(Sender: TObject);
     procedure StringGrid_DV_NodeEnter(Sender: TObject);
@@ -83,14 +141,19 @@ type
   private
 
   public
+    procedure UpdatePaintOptionToForm(a_paintOption:TPaintOption);
 
   end;
 
 var
   Form_Main: TForm_Main;
   netw:TTC2_Network;
+  paintOption:TPaintOption;
+  MenuRunError,EndingMessage:string;
+  GlobalResult:Double;
 
 implementation
+uses tc2_dialog;
 
 
 function HSVToColor(H,S,V:Single):TColor;
@@ -602,27 +665,32 @@ procedure FuncCalcDensity(Sender:TObject);
 var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
-  AufScpt.writeln('网络密度 D='+FloatToResult(netw.CalcDensity));
+  GlobalResult:=netw.CalcDensity;
+  AufScpt.writeln('网络密度 D='+FloatToResult(GlobalResult));
 end;
 procedure FuncCalcDiam(Sender:TObject);
 var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
-  AufScpt.writeln('网络直径 diam='+FloatToResult(netw.CalcDiameter));
+  GlobalResult:=netw.CalcDiameter;
+  AufScpt.writeln('网络直径 diam='+FloatToResult(GlobalResult));
 end;
 procedure FuncCalcRad(Sender:TObject);
 var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
-  AufScpt.writeln('网络半径 rad='+FloatToResult(netw.CalcRadius));
+  GlobalResult:=netw.CalcRadius;
+  AufScpt.writeln('网络半径 rad='+FloatToResult(GlobalResult));
 end;
 procedure FuncCalcWiener(Sender:TObject);
 var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
   try
-    AufScpt.writeln('网络Wiener指数 W='+FloatToResult(netw.CalcWiener));
+    GlobalResult:=netw.CalcWiener;
+    AufScpt.writeln('网络Wiener指数 W='+FloatToResult(GlobalResult));
   except
+    GlobalResult:=NA;
     AufScpt.send_error('Wiener指数只适用于连通图。');
   end;
 end;
@@ -633,7 +701,8 @@ var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
   arr:=GetMem(8*netw.NodeCount);
-  AufScpt.writeln('全局聚类系数 C='+FloatToResult(netw.CalcClusteringCoefficient(Arr)));
+  GlobalResult:=netw.CalcClusteringCoefficient(Arr);
+  AufScpt.writeln('全局聚类系数 C='+FloatToResult(GlobalResult));
   AufScpt.writeln('ID      Ci        Name');
   for pi:=0 to netw.NodeCount-1 do
     begin
@@ -648,7 +717,8 @@ var AufScpt:TAufScript;
 begin
   AufScpt:=Sender as TAufScript;
   arr:=GetMem(8*netw.NodeCount);
-  AufScpt.writeln('连通分量数量 K='+FloatToResult(netw.CalcConnectedComponent(Arr)));
+  GlobalResult:=netw.CalcConnectedComponent(Arr);
+  AufScpt.writeln('连通分量数量 K='+FloatToResult(GlobalResult));
   AufScpt.writeln('ID      Group     Name');
   for pi:=0 to netw.NodeCount-1 do
     begin
@@ -856,9 +926,14 @@ procedure FuncProcEnding(Sender:TObject);
 begin
   Form_Main.PaintBox_Net.Repaint;
   Application.ProcessMessages;
+  if EndingMessage<>'' then ShowMessage(EndingMessage+FloatToResult(GlobalResult));
+  EndingMessage:='';
 end;
 
-
+procedure FuncProcRaise(Sender:TObject);
+begin
+  ShowMessage(MenuRunError);
+end;
 
 {$R *.lfm}
 
@@ -919,7 +994,7 @@ begin
 
   Frame_AufScript1.Auf.Script.add_func('calc.dc',@FuncCalcDC,'','输出节点点度中心度');
   Frame_AufScript1.Auf.Script.add_func('calc.cc',@FuncCalcCC,'','输出节点接近中心度');
-  Frame_AufScript1.Auf.Script.add_func('calc.ircc',@FuncCalcIRCC,'','输出节点非联通接近中心度');
+  Frame_AufScript1.Auf.Script.add_func('calc.ircc',@FuncCalcIRCC,'','输出节点非连通接近中心度');
   Frame_AufScript1.Auf.Script.add_func('calc.bc',@FuncCalcBC,'','输出节点中介中心度');
 
   Frame_AufScript1.Auf.Script.add_func('calc.monodist',@FuncCalcMonoDist,'node','输出从某节点到其他节点的距离');
@@ -931,10 +1006,30 @@ begin
   Frame_AufScript1.Auf.Script.add_func('lay.color.hue',@FuncLayoutColor,'','色相差额分组着色');
   Frame_AufScript1.Auf.Script.add_func('lay.draw',@FuncLayoutDraw,'','更新绘图区');
 
+  Frame_AufScript1.Auf.Script.Func_process.OnRaise:=@FuncProcRaise;
+  Frame_AufScript1.Auf.Script.PSW.run_parameter.error_raise:=true;
 
-  //Frame_AufScript1.Auf.Script.Func_process.ending:=@FuncProcEnding;//AufFrame不能改，需要新增事件属性
+  Frame_AufScript1.OnRunEnding:=@FuncProcEnding;
 
   netw:=TTC2_Network.Create;
+  paintOption.Node.Shown:=true;
+  paintOption.Node.SizeOption.scale:=0.5;
+  paintOption.Node.LabelOption.Enabled:=false;
+  paintOption.Node.LabelOption.LabelType:=ltnNone;
+
+  paintOption.Edge.Shown:=true;
+  paintOption.Edge.ShowArrow:=false;
+  paintOption.Edge.WidthOption.scale:=0.5;
+  paintOption.Edge.LabelOption.Enabled:=false;
+  paintOption.Edge.LabelOption.LabelType:=lteNone;
+
+  paintOption.Actor.Shown:=false;
+  paintOption.Actor.LabelOption.Enabled:=false;
+
+  paintOption.OD.Shown:=false;
+  paintOption.OD.LabelOption.Enabled:=false;
+
+
 end;
 
 procedure TForm_Main.Frame_AufScript1Resize(Sender: TObject);
@@ -942,13 +1037,192 @@ begin
   Frame_AufScript1.FrameResize(Frame_AufScript1);
 end;
 
+procedure TForm_Main.MenuItem_Calc_BCClick(Sender: TObject);
+begin
+  paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.SizeOption.scale:=2.0;
+  UpdatePaintOptionToForm(paintOption);
+  MenuRunError:='计算中介中心度错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.bc');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_CCClick(Sender: TObject);
+begin
+  paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.SizeOption.scale:=2.0;
+  UpdatePaintOptionToForm(paintOption);
+  MenuRunError:='计算接近中心度错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.cc');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_CCIClick(Sender: TObject);
+begin
+  MenuRunError:='计算聚集系数错误。';
+  EndingMessage:=('全局聚集系数 CCI= ');
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.cci');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_DCClick(Sender: TObject);
+begin
+  paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.SizeOption.scale:=2.0;
+  UpdatePaintOptionToForm(paintOption);
+  MenuRunError:='计算点度中心度错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.dc');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_densityClick(Sender: TObject);
+begin
+  MenuRunError:='计算网络密度错误。';
+  EndingMessage:=('网络密度 density= ');
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.den');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_diameterClick(Sender: TObject);
+begin
+  MenuRunError:='计算网络直径错误。';
+  EndingMessage:=('网络直径 diam= ');
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.diam');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_IRCCClick(Sender: TObject);
+begin
+  paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.SizeOption.scale:=2.0;
+  UpdatePaintOptionToForm(paintOption);
+  MenuRunError:='计算非连通接近中心度错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.ircc');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_radiusClick(Sender: TObject);
+begin
+  MenuRunError:='计算网络半径错误。';
+  EndingMessage:=('网络半径 rad= ');
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.rad');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Calc_WienerClick(Sender: TObject);
+begin
+  MenuRunError:='计算Wiener指数错误。';
+  EndingMessage:=('Wiener指数 W= ');
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('calc.wiener');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Layout_GeoClick(Sender: TObject);
+begin
+  MenuRunError:='地理布局错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.geo');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Layout_LoopClick(Sender: TObject);
+begin
+  MenuRunError:='环形布局错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.loop');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Layout_RandomClick(Sender: TObject);
+begin
+  MenuRunError:='随机布局错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.rand');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_ExportAdjacentClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('导出领接矩阵',['文件路径'],[]);
+  MenuRunError:='导出领接矩阵错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('io.out.adj "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_ExportEdgelistClick(Sender: TObject);
+begin
+  //
+end;
+
+procedure TForm_Main.MenuItem_Network_ExportGeoJSONClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('导出GeoJSON',['文件路径'],[]);
+  MenuRunError:='导出GeoJSON错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('io.out.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_genRandomClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('创建随机网络',['节点数','连接概率'],[]);
+  MenuRunError:='创建随机网络错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.build.rand '+Dialog_TC2.Values[0]+' '+Dialog_TC2.Values[1]);
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.loop');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_ImportAdjacentClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('导入领接矩阵',['文件路径'],[]);
+  MenuRunError:='导入领接矩阵错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
+  Frame_AufScript1.Memo_cmd.Lines.Add('io.inp.adj "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.loop');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_ImportEdgelistClick(Sender: TObject);
+begin
+  //
+end;
+
+procedure TForm_Main.MenuItem_Network_ImportGeoJSONClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('导入GeoJSON',['文件路径'],[]);
+  MenuRunError:='导入GeoJSON错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
+  Frame_AufScript1.Memo_cmd.Lines.Add('io.inp.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.geo');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
 procedure TForm_Main.PaintBox_NetPaint(Sender: TObject);
 var PB:TPaintBox;
     pi:integer;
     W,H,L,R,T,B,WW,HH:{integer}double;
-    NodeLabel,EdgeLabel:integer;
+    NodeLabel:TLabelTypeNode;//integer;
+    EdgeLabel:TLabelTypeEdge;//integer;
     n1,n2,a1,a2:TPoint;
-    show_arrow,node_label,edge_label:boolean;
+    //show_arrow,node_label,edge_label:boolean;
     edge_width,edge_display_value,node_size:double;
     edge_display_precision:smallint;
     node_size_value:qword;
@@ -958,15 +1232,15 @@ begin
   if not assigned(netw) then exit;
   if (netw.NodeCount=0) and (netw.ActorCount=0) then exit;
 
-  show_arrow:=CheckBox_ShowArrow.Checked;
-  node_label:=CheckBox_NodeLabel.Checked;
-  edge_label:=CheckBox_EdgeLabel.Checked;
+  //show_arrow:=paintOption.Edge.ShowArrow;//CheckBox_ShowEdgeArrow.Checked;
+  //node_label:=paintOption.Node.Shown;//CheckBox_ShowNodeLabel.Checked;
+  //edge_label:=paintOption.Edge.Shown;//CheckBox_ShowEdgeLabel.Checked;
 
-  edge_width:=FloatSpinEdit_EdgeWidth.Value;
-  node_size:=FloatSpinEdit_NodeSize.Value;
+  edge_width:=paintOption.Edge.WidthOption.scale;//FloatSpinEdit_EdgeWidth.Value;
+  node_size:=paintOption.Node.SizeOption.scale;//FloatSpinEdit_NodeSize.Value;
 
-  NodeLabel:=Self.RadioGroup_NodeLabel.ItemIndex;
-  EdgeLabel:=Self.RadioGroup_EdgeLabel.ItemIndex;
+  NodeLabel:=paintOption.Node.LabelOption.LabelType;//Self.RadioGroup_NodeLabel.ItemIndex;
+  EdgeLabel:=paintOption.Edge.LabelOption.LabelType;//Self.RadioGroup_EdgeLabel.ItemIndex;
   W:=PB.Width;
   H:=PB.Height;
 
@@ -1000,16 +1274,16 @@ begin
       end;
 
   //绘制边线
-  IF CheckBox_ShowEdges.Checked THEN BEGIN
+  IF paintOption.Edge.Shown{CheckBox_ShowEdges.Checked} THEN BEGIN
     for pi:=0 to netw.EdgeCount-1 do
       with netw.Edges[pi] do
         begin
           //计算坐标和标注数值
           case EdgeLabel of
-            3:begin edge_display_value:=frequent;edge_display_precision:=2;end;
-            2:begin edge_display_value:=weight;edge_display_precision:=1;end;
-            1:begin edge_display_value:=id;edge_display_precision:=0;end;
-            else begin edge_display_value:=0;edge_display_precision:=-1;end;
+            lteFrequency{3}:  begin  edge_display_value:=frequent;  edge_display_precision:=2;   end;
+            lteWeight{2}:     begin  edge_display_value:=weight;    edge_display_precision:=1;   end;
+            lteID{1}:         begin  edge_display_value:=id;        edge_display_precision:=0;   end;
+            else              begin  edge_display_value:=0;         edge_display_precision:=-1;  end;
           end;
           GetArrowPoint(nodes[0].paint_pos,nodes[1].paint_pos,6,n1,n2,a1,a2);
           //画线
@@ -1017,7 +1291,7 @@ begin
           PB.Canvas.Pen.Width:=trunc(edge_width*edge_display_value)+1;
           PB.Canvas.Line(n1,n2);
           //画箭头
-          if show_arrow then begin
+          if paintOption.Edge.ShowArrow{show_arrow} then begin
             PB.Canvas.Brush.Style:=bsSolid;
             PB.Canvas.Brush.Color:=clBlack;
             //PB.Canvas.Pen.Color:=clBlack;
@@ -1025,7 +1299,7 @@ begin
             PB.Canvas.Polygon([n2,a1,a2]);
           end;
           //标注
-          IF edge_label THEN BEGIN
+          IF paintOption.Edge.LabelOption.Enabled{edge_label} THEN BEGIN
             PB.Canvas.Brush.Style:=bsClear;
             PB.Canvas.Font.Size:=10;
             PB.Canvas.Font.Color:=clBlack;
@@ -1040,7 +1314,7 @@ begin
   END;
 
   //绘制OD
-  IF CheckBox_ShowODs.Checked THEN BEGIN
+  IF paintOption.OD.Shown{CheckBox_ShowODs.Checked} THEN BEGIN
     for pi:=0 to netw.ODCount-1 do
       with netw.ODs[pi] do
         begin
@@ -1051,7 +1325,7 @@ begin
           PB.Canvas.Pen.Width:=1;
           PB.Canvas.Line(n1,n2);
           //画箭头
-          if show_arrow then begin
+          if paintOption.OD.ShowArrow{show_arrow} then begin
             PB.Canvas.Brush.Style:=bsSolid;
             PB.Canvas.Brush.Color:=clBlack;
             //PB.Canvas.Pen.Color:=clBlack;
@@ -1062,8 +1336,8 @@ begin
   END;
 
   //绘制顶点标注
-  IF CheckBox_ShowNodes.Checked THEN BEGIN
-    IF node_label THEN BEGIN
+  IF paintOption.Node.Shown{CheckBox_ShowNodes.Checked} THEN BEGIN
+    IF paintOption.Node.LabelOption.Enabled{node_label} THEN BEGIN
       PB.Canvas.Brush.Style:=bsClear;
       PB.Canvas.Font.Color:=clRed;
       PB.Canvas.Font.Size:=10;
@@ -1071,10 +1345,15 @@ begin
         with netw.Nodes[pi] do
           begin
             case NodeLabel of
-              4:PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,FloatToStrF(CalcResult,ffFixed,1,1));
-              3:PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(Group));
-              2:PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,Utf8toWinCP(name));
-              1:PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(id));
+              ltnResult{4}:begin
+                if is_na(CalcResult) then
+                  PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,'N/A')
+                else
+                  PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,FloatToStrF(CalcResult,ffFixed,1,1));
+              end;
+              ltnGroup{3}:   PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(Group));
+              ltnName{2}:    PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,Utf8toWinCP(name));
+              ltnID{1}:      PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(id));
               else ;
             end;
           end;
@@ -1082,7 +1361,7 @@ begin
   END;
 
   //绘制顶点符号
-  IF CheckBox_ShowNodes.Checked THEN BEGIN
+  IF paintOption.Node.Shown{CheckBox_ShowNodes.Checked} THEN BEGIN
     PB.Canvas.Brush.Style:=bsSolid;
     PB.Canvas.Brush.Color:=clRed;
     PB.Canvas.Pen.Width:=1;
@@ -1091,7 +1370,14 @@ begin
       with netw.Nodes[pi] do
         begin
           PB.Canvas.Brush.Color:=Color;
-          if NodeLabel=4 then node_size_value:=trunc(CalcResult*node_size/2) else node_size_value:=5;
+          if NodeLabel=ltnResult{4} then begin
+            if is_na(CalcResult) then
+              node_size_value:=0
+            else
+              node_size_value:=trunc(CalcResult*node_size/2);
+          end else begin
+            node_size_value:=5;
+          end;
           PB.Canvas.Rectangle(
             paint_pos.x-node_size_value,
             paint_pos.y-node_size_value,
@@ -1103,8 +1389,8 @@ begin
   END;
 
   //绘制行动者标注
-  IF CheckBox_ShowActors.Checked THEN BEGIN
-    IF node_label THEN BEGIN
+  IF paintOption.Actor.Shown{CheckBox_ShowActors.Checked} THEN BEGIN
+    IF paintOption.Actor.Shown{node_label} THEN BEGIN
       PB.Canvas.Brush.Style:=bsClear;
       PB.Canvas.Font.Color:=clBlue;
       PB.Canvas.Font.Size:=8;
@@ -1115,7 +1401,7 @@ begin
   END;
 
   //绘制行动者符号
-  IF CheckBox_ShowActors.Checked THEN BEGIN
+  IF paintOption.Actor.Shown{CheckBox_ShowActors.Checked} THEN BEGIN
     PB.Canvas.Brush.Style:=bsSolid;
     PB.Canvas.Pen.Width:=1;
     PB.Canvas.Pen.Color:=clBlack;
@@ -1135,14 +1421,27 @@ begin
   END;
 end;
 
-procedure TForm_Main.RadioGroup_EdgeLabelClick(Sender: TObject);
+procedure TForm_Main.RadioGroup_EdgeLabelTypeClick(Sender: TObject);
 begin
-  Self.Repaint;
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.Edge.LabelOption.LabelType:=lteID;
+    2:paintOption.Edge.LabelOption.LabelType:=lteWeight;
+    3:paintOption.Edge.LabelOption.LabelType:=lteFrequency;
+    else paintOption.Edge.LabelOption.LabelType:=lteNone;
+  end;
+  Repaint;
 end;
 
-procedure TForm_Main.RadioGroup_NodeLabelClick(Sender: TObject);
+procedure TForm_Main.RadioGroup_NodeLabelTypeClick(Sender: TObject);
 begin
-  Self.Repaint;
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.Node.LabelOption.LabelType:=ltnID;
+    2:paintOption.Node.LabelOption.LabelType:=ltnName;
+    3:paintOption.Node.LabelOption.LabelType:=ltnGroup;
+    4:paintOption.Node.LabelOption.LabelType:=ltnResult;
+    else paintOption.Node.LabelOption.LabelType:=ltnNone;
+  end;
+  Repaint;
 end;
 
 procedure TForm_Main.StringGrid_DV_ActorEnter(Sender: TObject);
@@ -1264,24 +1563,46 @@ begin
   netw.Free;
 end;
 
-procedure TForm_Main.CheckBox_ShowArrowClick(Sender: TObject);
+procedure TForm_Main.CheckBox_ShowEdgeArrowClick(Sender: TObject);
 begin
-  Self.Repaint;
+  paintOption.Edge.ShowArrow:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowEdgesClick(Sender: TObject);
+begin
+  paintOption.Edge.Shown:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowNodesClick(Sender: TObject);
+begin
+  paintOption.Node.Shown:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowODsClick(Sender: TObject);
+begin
+  paintOption.OD.Shown:=(Sender as TCheckBox).Checked;
+  Repaint;
 end;
 
 procedure TForm_Main.FloatSpinEdit_EdgeWidthEditingDone(Sender: TObject);
 begin
-  Self.Repaint;
+  paintOption.Edge.WidthOption.scale:=(Sender as TFloatSpinEdit).Value;
+  Repaint;
 end;
 
 procedure TForm_Main.FloatSpinEdit_NodeSizeEditingDone(Sender: TObject);
 begin
-  Self.Repaint;
+  paintOption.Node.SizeOption.scale:=(Sender as TFloatSpinEdit).Value;
+  Repaint;
 end;
 
-procedure TForm_Main.CheckBox_EdgeLabelClick(Sender: TObject);
+procedure TForm_Main.CheckBox_ShowEdgeLabelClick(Sender: TObject);
 begin
-  Self.Repaint;
+  paintOption.Edge.LabelOption.Enabled:=(Sender as TCheckBox).Checked;
+  Repaint;
 end;
 
 procedure TForm_Main.Button_Export_SGClick(Sender: TObject);
@@ -1299,9 +1620,62 @@ begin
   end;
 end;
 
-procedure TForm_Main.CheckBox_NodeLabelClick(Sender: TObject);
+procedure TForm_Main.Button_runClick(Sender: TObject);
 begin
-  Self.Repaint;
+  EndingMessage:='';
+  Frame_AufScript1.Button_runClick(Self);
+end;
+
+procedure TForm_Main.CheckBox_ShowActorLabelClick(Sender: TObject);
+begin
+  paintOption.Actor.LabelOption.Enabled:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowNodeLabelClick(Sender: TObject);
+begin
+  paintOption.Node.LabelOption.Enabled:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowActorsClick(Sender: TObject);
+begin
+  paintOption.Actor.Shown:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.UpdatePaintOptionToForm(a_paintOption:TPaintOption);
+begin
+  with a_paintOption do begin
+    CheckBox_ShowNodes.Checked:=Node.Shown;
+    CheckBox_ShowNodeLabel.Checked:=Node.LabelOption.Enabled;
+    case Node.LabelOption.LabelType of
+      ltnID:RadioGroup_NodeLabelType.ItemIndex:=1;
+      ltnName:RadioGroup_NodeLabelType.ItemIndex:=2;
+      ltnGroup:RadioGroup_NodeLabelType.ItemIndex:=3;
+      ltnResult:RadioGroup_NodeLabelType.ItemIndex:=4;
+      else RadioGroup_NodeLabelType.ItemIndex:=0;
+    end;
+    FloatSpinEdit_NodeSize.Value:=Node.SizeOption.scale;
+
+    CheckBox_ShowEdges.Checked:=Edge.Shown;
+    CheckBox_ShowEdgeLabel.Checked:=Edge.LabelOption.Enabled;
+    CheckBox_ShowEdgeArrow.Checked:=Edge.ShowArrow;
+    case Edge.LabelOption.LabelType of
+      lteID:RadioGroup_EdgeLabelType.ItemIndex:=1;
+      lteWeight:RadioGroup_EdgeLabelType.ItemIndex:=2;
+      lteFrequency:RadioGroup_EdgeLabelType.ItemIndex:=3;
+      else RadioGroup_EdgeLabelType.ItemIndex:=0;
+    end;
+    FloatSpinEdit_EdgeWidth.Value:=Edge.WidthOption.scale;
+
+    CheckBox_ShowActors.Checked:=Actor.Shown;
+    CheckBox_ShowActorLabel.Checked:=Actor.LabelOption.Enabled;
+
+    CheckBox_ShowODs.Checked:=OD.Shown;
+    //CheckBox_ShowODLabel.Checked:=OD.LabelOption.Enabled;
+
+  end;
 end;
 
 end.

@@ -1,0 +1,114 @@
+object Dialog_TC2: TDialog_TC2
+  Left = 1100
+  Height = 274
+  Top = 459
+  Width = 628
+  Caption = 'Dialog_TC2'
+  ClientHeight = 274
+  ClientWidth = 628
+  DesignTimePPI = 144
+  Position = poMainFormCenter
+  LCLVersion = '1.8.4.0'
+  object Edit1: TEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 128
+    Height = 32
+    Top = 28
+    Width = 468
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 128
+    BorderSpacing.Right = 32
+    TabOrder = 0
+    Text = 'Edit1'
+  end
+  object Label1: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 32
+    Height = 24
+    Top = 32
+    Width = 57
+    BorderSpacing.Left = 32
+    BorderSpacing.Top = 32
+    Caption = 'Label1'
+    ParentColor = False
+  end
+  object Edit2: TEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label2
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 128
+    Height = 32
+    Top = 84
+    Width = 468
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 128
+    BorderSpacing.Right = 32
+    TabOrder = 1
+    Text = 'Edit2'
+  end
+  object Label2: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrBottom
+    Left = 32
+    Height = 24
+    Top = 88
+    Width = 57
+    BorderSpacing.Left = 32
+    BorderSpacing.Top = 32
+    Caption = 'Label2'
+    ParentColor = False
+  end
+  object Edit3: TEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label3
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 128
+    Height = 32
+    Top = 140
+    Width = 468
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 128
+    BorderSpacing.Right = 32
+    TabOrder = 2
+    Text = 'Edit3'
+  end
+  object Label3: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label2
+    AnchorSideTop.Side = asrBottom
+    Left = 32
+    Height = 24
+    Top = 144
+    Width = 57
+    BorderSpacing.Left = 32
+    BorderSpacing.Top = 32
+    Caption = 'Label3'
+    ParentColor = False
+  end
+  object Button_OK: TButton
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 238
+    Height = 36
+    Top = 206
+    Width = 153
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Bottom = 32
+    Caption = '确定'
+    ModalResult = 1
+    OnClick = Button_OKClick
+    TabOrder = 3
+  end
+end

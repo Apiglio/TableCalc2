@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="Table_Calc_2.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -69,6 +69,13 @@
         <Filename Value="tc2_geojson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="tc2_dialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Dialog_TC2"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
