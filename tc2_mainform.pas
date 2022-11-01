@@ -9,7 +9,7 @@ uses
   ComCtrls, StdCtrls, Spin, Grids, Menus, LazUTF8, SpinEx, Apiglio_Useful,
   aufscript_frame, auf_ram_var, tc2_network, Types;
 
-const NA:double=$7fffffffffffffff;
+//const NA:double=tc2_network.NA;//$7fffffffffffffff;
 
 type
 
@@ -17,6 +17,8 @@ type
 
   TForm_Main = class(TForm)
     Button_Export_SG: TButton;
+    CheckBox_ShowODArrow: TCheckBox;
+    CheckBox_ShowODLabel: TCheckBox;
     CheckBox_ShowODs: TCheckBox;
     CheckBox_ShowNodes: TCheckBox;
     CheckBox_ShowEdgeLabel: TCheckBox;
@@ -26,17 +28,32 @@ type
     CheckBox_ShowEdges: TCheckBox;
     CheckBox_ShowActors: TCheckBox;
     Edit_ExportName: TEdit;
+    FloatSpinEdit_ActorSize: TFloatSpinEdit;
     FloatSpinEdit_EdgeWidth: TFloatSpinEdit;
     FloatSpinEditEx_Top: TFloatSpinEditEx;
     FloatSpinEditEx_Left: TFloatSpinEditEx;
     FloatSpinEditEx_Right: TFloatSpinEditEx;
     FloatSpinEditEx_Bottom: TFloatSpinEditEx;
+    FloatSpinEdit_ODWidth: TFloatSpinEdit;
     FloatSpinEdit_NodeSize: TFloatSpinEdit;
     Frame_AufScript1: TFrame_AufScript;
+    Label_ActorSize: TLabel;
     Label_EdgeWidth: TLabel;
+    Label_ODWidth: TLabel;
     Label_NodeSize: TLabel;
     Label_LayoutOpt: TLabel;
     MainMenu1: TMainMenu;
+    MenuItem_Actor_ODFrequency: TMenuItem;
+    MenuItem_Calc_div01: TMenuItem;
+    MenuItem_Calc_Actor: TMenuItem;
+    MenuItem_Network_CreateOD_block: TMenuItem;
+    MenuItem_Network_CreateOD: TMenuItem;
+    MenuItem_Network_ActorEdgeUpdate: TMenuItem;
+    MenuItem_Network_div03: TMenuItem;
+    MenuItem_Network_genRandomKPlex: TMenuItem;
+    MenuItem_Network_genRandomNClique: TMenuItem;
+    MenuItem_Actor_ImportGeoJSON: TMenuItem;
+    MenuItem_Actor_Import: TMenuItem;
     MenuItem_Layout_Geo: TMenuItem;
     MenuItem_Layout_Loop: TMenuItem;
     MenuItem_Layout_Random: TMenuItem;
@@ -65,11 +82,17 @@ type
     MenuItem_Calc_CC: TMenuItem;
     MenuItem_Calc_DC: TMenuItem;
     MenuItem_Calc_Centralities: TMenuItem;
-    MenuItem_Network_genWhat: TMenuItem;
+    MenuItem_Network_genRandomClique: TMenuItem;
     MenuItem_Network_genRandom: TMenuItem;
     MenuItem_Network: TMenuItem;
     MenuItem_Calc: TMenuItem;
     PageControl_DataView: TPageControl;
+    RadioGroup_ActorLabelType: TRadioGroup;
+    RadioGroup_ActorScaleType: TRadioGroup;
+    RadioGroup_ODLabelType: TRadioGroup;
+    RadioGroup_ODScaleType: TRadioGroup;
+    RadioGroup_NodeScaleType: TRadioGroup;
+    RadioGroup_EdgeScaleType: TRadioGroup;
     ScrollBox_PaintOption: TScrollBox;
     ScrollBox_ActorOption: TScrollBox;
     ScrollBox_ODOption: TScrollBox;
@@ -104,12 +127,18 @@ type
     procedure CheckBox_ShowEdgeArrowClick(Sender: TObject);
     procedure CheckBox_ShowEdgesClick(Sender: TObject);
     procedure CheckBox_ShowNodesClick(Sender: TObject);
+    procedure CheckBox_ShowODArrowClick(Sender: TObject);
+    procedure CheckBox_ShowODLabelClick(Sender: TObject);
     procedure CheckBox_ShowODsClick(Sender: TObject);
+    procedure FloatSpinEdit_ActorSizeEditingDone(Sender: TObject);
     procedure FloatSpinEdit_EdgeWidthEditingDone(Sender: TObject);
     procedure FloatSpinEdit_NodeSizeEditingDone(Sender: TObject);
+    procedure FloatSpinEdit_ODWidthEditingDone(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Frame_AufScript1Resize(Sender: TObject);
+    procedure MenuItem_Actor_ImportGeoJSONClick(Sender: TObject);
+    procedure MenuItem_Actor_ODFrequencyClick(Sender: TObject);
     procedure MenuItem_Calc_BCClick(Sender: TObject);
     procedure MenuItem_Calc_CCClick(Sender: TObject);
     procedure MenuItem_Calc_CCIClick(Sender: TObject);
@@ -122,6 +151,9 @@ type
     procedure MenuItem_Layout_GeoClick(Sender: TObject);
     procedure MenuItem_Layout_LoopClick(Sender: TObject);
     procedure MenuItem_Layout_RandomClick(Sender: TObject);
+    procedure MenuItem_Network_ActorEdgeUpdateClick(Sender: TObject);
+    procedure MenuItem_Network_CreateOD_blockClick(Sender: TObject);
+    procedure MenuItem_Network_disweightClick(Sender: TObject);
     procedure MenuItem_Network_ExportAdjacentClick(Sender: TObject);
     procedure MenuItem_Network_ExportEdgelistClick(Sender: TObject);
     procedure MenuItem_Network_ExportGeoJSONClick(Sender: TObject);
@@ -129,9 +161,17 @@ type
     procedure MenuItem_Network_ImportAdjacentClick(Sender: TObject);
     procedure MenuItem_Network_ImportEdgelistClick(Sender: TObject);
     procedure MenuItem_Network_ImportGeoJSONClick(Sender: TObject);
+    procedure MenuItem_Network_indirectClick(Sender: TObject);
+    procedure MenuItem_Network_WeightReverseClick(Sender: TObject);
     procedure PaintBox_NetPaint(Sender: TObject);
+    procedure RadioGroup_ActorLabelTypeClick(Sender: TObject);
+    procedure RadioGroup_ActorScaleTypeClick(Sender: TObject);
     procedure RadioGroup_EdgeLabelTypeClick(Sender: TObject);
+    procedure RadioGroup_EdgeScaleTypeClick(Sender: TObject);
     procedure RadioGroup_NodeLabelTypeClick(Sender: TObject);
+    procedure RadioGroup_NodeScaleTypeClick(Sender: TObject);
+    procedure RadioGroup_ODLabelTypeClick(Sender: TObject);
+    procedure RadioGroup_ODScaleTypeClick(Sender: TObject);
     procedure StringGrid_DV_ActorEnter(Sender: TObject);
     procedure StringGrid_DV_EdgeEnter(Sender: TObject);
     procedure StringGrid_DV_NodeEnter(Sender: TObject);
@@ -141,7 +181,7 @@ type
   private
 
   public
-    procedure UpdatePaintOptionToForm(a_paintOption:TPaintOption);
+    procedure UpdatePaintOptionToForm(aPaintOption:TPaintOption);
 
   end;
 
@@ -182,6 +222,20 @@ begin
   if f=$7fffffffffffffff then result:='n/a'
   else result:=FloatToStrF(f,ffFixed,3,3);
   result:=Usf.left_adjust(result,8);
+end;
+function ValueToSize(value:double;times:double=1):integer;
+begin
+  result:=0;
+  if is_na(value) then exit;
+  result:=trunc(value*times);
+  if value<0 then result:=0;
+  if value>1000 then result:=1000;
+end;
+function ValueToSize(value:longint;times:double=1):integer;
+begin
+  result:=trunc(value*times);
+  if value<0 then result:=0;
+  if value>1000 then result:=1000;
 end;
 
 procedure GetArrowPoint(p1,p2:TPoint;arrow_size:byte;out n1,n2,a1,a2:TPoint);
@@ -607,6 +661,35 @@ begin
     end;
   AufScpt.writeln('随机网络已创建。');
 end;
+procedure FuncBuildRandNClique(Sender:TObject);
+var AAuf:TAuf;
+    AufScpt:TAufScript;
+    V,N,remain:dword;
+    pi,pj:integer;
+begin
+  AufScpt:=Sender as TAufScript;
+  AAuf:=AufScpt.Auf as TAuf;
+
+  if not AAuf.CheckArgs(3) then exit;
+  if not AAuf.TryArgToDWord(1,V) then exit;
+  if not AAuf.TryArgToDWord(2,N) then exit;
+  if N>=V then begin
+    AufScpt.send_error('n值大于或等于顶点数量。');
+  end;
+  for pi:=0 to V-1 do netw.AddNode('N'+IntToStr(pi));
+  for pi:=0 to V-1 do begin
+    remain:=V-N-netw.Nodes[pi].EdgesIn.Count;
+    for pj:=pi+1 to V-1 do begin
+      if random<=remain/(V-pj) then begin
+        netw.AddEdgeIndex(pi,pj);
+        netw.AddEdgeIndex(pj,pi);
+        dec(remain);
+      end;
+    end;
+  end;
+  AufScpt.writeln('随机网络已创建。');
+end;
+
 procedure FuncIndirectGraphy(Sender:TObject);
 var AufScpt:TAufScript;
 begin
@@ -945,6 +1028,8 @@ begin
   Frame_AufScript1.AufGenerator;
   Frame_AufScript1.Auf.Script.add_func('net.clear',@FuncClear,'','清空网络');
   Frame_AufScript1.Auf.Script.add_func('net.build.rand',@FuncBuildRand,'N,P','创建随机网络');
+  //Frame_AufScript1.Auf.Script.add_func('net.build.n_clique',@FuncBuildRandNClique,'N,n','创建随机n-Clique');
+
   Frame_AufScript1.Auf.Script.add_func('net.indirect',@FuncIndirectGraphy,'','无向图化/双向化');
   Frame_AufScript1.Auf.Script.add_func('net.indirectchk',@FuncIndirectWeightCheck,'','双向化权重修正');
   Frame_AufScript1.Auf.Script.add_func('net.removemid',@FuncRemoveMidNode,'','删除无意义的过境点');
@@ -1012,23 +1097,61 @@ begin
   Frame_AufScript1.OnRunEnding:=@FuncProcEnding;
 
   netw:=TTC2_Network.Create;
-  paintOption.Node.Shown:=true;
-  paintOption.Node.SizeOption.scale:=0.5;
-  paintOption.Node.LabelOption.Enabled:=false;
-  paintOption.Node.LabelOption.LabelType:=ltnNone;
 
-  paintOption.Edge.Shown:=true;
-  paintOption.Edge.ShowArrow:=false;
-  paintOption.Edge.WidthOption.scale:=0.5;
-  paintOption.Edge.LabelOption.Enabled:=false;
-  paintOption.Edge.LabelOption.LabelType:=lteNone;
+  paintOption:=TPaintOption.Create;
 
-  paintOption.Actor.Shown:=false;
-  paintOption.Actor.LabelOption.Enabled:=false;
+  with paintOption.Node do begin
+    Shown:=true;
+    SizeOption.scale:=0.5;
+    LabelOption.Enabled:=false;
+    LabelOption.LabelType:=ltnNone;
+    LabelOption.LabelFont.Color:=clRed;
+    LabelOption.LabelFont.Size:=10;
+    SizeOption.Scale:=5;
+    SizeOption.ScaleType:=stnNone;
+    ColorOption.Color:=clRed;
+    ColorOption.ColorType:=ctnNone;
+  end;
 
-  paintOption.OD.Shown:=false;
-  paintOption.OD.LabelOption.Enabled:=false;
+  with paintOption.Edge do begin
+    Shown:=true;
+    ShowArrow:=false;
+    LabelOption.Enabled:=false;
+    LabelOption.LabelType:=lteNone;
+    LabelOption.LabelFont.Color:=clRed;
+    LabelOption.LabelFont.Size:=10;
+    WidthOption.scale:=1;
+    WidthOption.ScaleType:=steNone;
+    ColorOption.Color:=clBlack;
+    ColorOption.ColorType:=cteNone;
+  end;
 
+  with paintOption.Actor do begin
+    Shown:=false;
+    LabelOption.Enabled:=false;
+    LabelOption.LabelType:=ltaNone;
+    LabelOption.LabelFont.Color:=clBlue;
+    LabelOption.LabelFont.Size:=8;
+    SizeOption.Scale:=5;
+    SizeOption.ScaleType:=staNone;
+    ColorOption.Color:=clBlue;
+    ColorOption.ColorType:=ctaNone;
+  end;
+
+  with paintOption.OD do begin
+    Shown:=false;
+    ShowArrow:=false;
+    LabelOption.Enabled:=false;
+    LabelOption.LabelType:=ltoNone;
+    LabelOption.LabelFont.Color:=clRed;
+    LabelOption.LabelFont.Size:=10;
+    WidthOption.scale:=0.5;
+    WidthOption.ScaleType:=stoNone;
+    ColorOption.Color:=clGray;
+    ColorOption.ColorType:=ctoNone;
+  end;
+
+  UpdatePaintOptionToForm(paintOption);
 
 end;
 
@@ -1037,9 +1160,35 @@ begin
   Frame_AufScript1.FrameResize(Frame_AufScript1);
 end;
 
+procedure TForm_Main.MenuItem_Actor_ImportGeoJSONClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('导出GeoJSON',['文件路径'],[]);
+  MenuRunError:='导出GeoJSON错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.io.inp.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.updateedge');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Actor_ODFrequencyClick(Sender: TObject);
+begin
+  paintOption.Edge.WidthOption.Scale:=2.0;
+  paintOption.Edge.WidthOption.ScaleType:=steFrequency;
+  paintOption.Edge.LabelOption.LabelType:=lteFrequency;
+  paintOption.Edge.LabelOption.Enabled:=true;
+  UpdatePaintOptionToForm(paintOption);
+  MenuRunError:='行动者流量计算错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.odfreq');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
 procedure TForm_Main.MenuItem_Calc_BCClick(Sender: TObject);
 begin
   paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.LabelOption.Enabled:=true;
+  paintOption.Node.SizeOption.ScaleType:=stnResult;
   paintOption.Node.SizeOption.scale:=2.0;
   UpdatePaintOptionToForm(paintOption);
   MenuRunError:='计算中介中心度错误。';
@@ -1052,6 +1201,8 @@ end;
 procedure TForm_Main.MenuItem_Calc_CCClick(Sender: TObject);
 begin
   paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.LabelOption.Enabled:=true;
+  paintOption.Node.SizeOption.ScaleType:=stnResult;
   paintOption.Node.SizeOption.scale:=2.0;
   UpdatePaintOptionToForm(paintOption);
   MenuRunError:='计算接近中心度错误。';
@@ -1073,6 +1224,8 @@ end;
 procedure TForm_Main.MenuItem_Calc_DCClick(Sender: TObject);
 begin
   paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.LabelOption.Enabled:=true;
+  paintOption.Node.SizeOption.ScaleType:=stnResult;
   paintOption.Node.SizeOption.scale:=2.0;
   UpdatePaintOptionToForm(paintOption);
   MenuRunError:='计算点度中心度错误。';
@@ -1103,6 +1256,8 @@ end;
 procedure TForm_Main.MenuItem_Calc_IRCCClick(Sender: TObject);
 begin
   paintOption.Node.LabelOption.LabelType:=ltnResult;
+  paintOption.Node.LabelOption.Enabled:=true;
+  paintOption.Node.SizeOption.ScaleType:=stnResult;
   paintOption.Node.SizeOption.scale:=2.0;
   UpdatePaintOptionToForm(paintOption);
   MenuRunError:='计算非连通接近中心度错误。';
@@ -1152,6 +1307,29 @@ begin
   Frame_AufScript1.Memo_cmd.Clear;
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.rand');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_ActorEdgeUpdateClick(Sender: TObject);
+begin
+  MenuRunError:='连接行动者与边线错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.updateedge');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_CreateOD_blockClick(Sender: TObject);
+begin
+  MenuRunError:='任意两个行动者之间创建OD错误。';
+  paintOption.OD.Shown:=true;
+  UpdatePaintOptionToForm(paintOption);
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.build.block');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_disweightClick(Sender: TObject);
+begin
+  //
 end;
 
 procedure TForm_Main.MenuItem_Network_ExportAdjacentClick(Sender: TObject);
@@ -1212,19 +1390,137 @@ begin
   Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
   Frame_AufScript1.Memo_cmd.Lines.Add('io.inp.json "'+Dialog_TC2.Values[0]+'"');
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.geo');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.len2weight');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_indirectClick(Sender: TObject);
+begin
+  MenuRunError:='无向化/双向化错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.indirect');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_WeightReverseClick(Sender: TObject);
+begin
+  //
+end;
+
+function getNodeLabel(aNode:TTC2_Node;aOption:TPaintOption):string;
+begin
+  case aOption.Node.LabelOption.LabelType of
+    ltnID:result:=IntToStr(aNode.id);
+    ltnName:result:=aNode.name;
+    ltnGroup:result:=IntToStr(aNode.Group);
+    ltnResult:result:=FloatToResult(aNode.CalcResult);
+    else result:='';
+  end;
+end;
+function getEdgeLabel(aEdge:TTC2_Edge;aOption:TPaintOption):string;
+begin
+  case aOption.Edge.LabelOption.LabelType of
+    lteID:result:=IntToStr(aEdge.id);
+    lteWeight:result:=FloatToResult(aEdge.weight);
+    lteFrequency:result:=FloatToResult(aEdge.frequent);
+    else result:='';
+  end;
+end;
+function getActorLabel(aActor:TTC2_Actor;aOption:TPaintOption):string;
+begin
+  case aOption.Actor.LabelOption.LabelType of
+    ltaID:result:=IntToStr(aActor.id);
+    ltaName:result:=aActor.name;
+    else result:='';
+  end;
+end;
+function getODLabel(aOD:TTC2_ActorOD;aOption:TPaintOption):string;
+begin
+  case aOption.OD.LabelOption.LabelType of
+    ltoID:result:=IntToStr(aOD.id);
+    ltoDist:result:=FloatToResult(aOD.distance);
+    else result:='';
+  end;
+end;
+function getNodeScale(aNode:TTC2_Node;aOption:TPaintOption):integer;
+var base_value:double;
+begin
+  base_value:=aOption.Node.SizeOption.Scale;
+  case aOption.Node.SizeOption.ScaleType of
+    stnResult:result:=ValueToSize(aNode.CalcResult,base_value);
+    else result:=ValueToSize(base_value);
+  end;
+end;
+function getEdgeScale(aEdge:TTC2_Edge;aOption:TPaintOption):integer;
+var base_value:double;
+begin
+  base_value:=aOption.Edge.WidthOption.Scale;
+  case aOption.Edge.WidthOption.ScaleType of
+    steWeight:result:=ValueToSize(aEdge.weight,base_value);
+    steFrequency:result:=ValueToSize(aEdge.frequent,base_value);
+    else result:=ValueToSize(base_value);
+  end;
+end;
+function getActorScale(aActor:TTC2_Actor;aOption:TPaintOption):integer;
+var base_value:double;
+begin
+  base_value:=aOption.Actor.SizeOption.Scale;
+  case aOption.Actor.SizeOption.ScaleType of
+    staNone:result:=ValueToSize(base_value);
+    else result:=ValueToSize(base_value);
+  end;
+end;
+function getODScale(aOD:TTC2_ActorOD;aOption:TPaintOption):integer;
+var base_value:double;
+begin
+  base_value:=aOption.OD.WidthOption.Scale;
+  case aOption.OD.WidthOption.ScaleType of
+    stoDist:result:=ValueToSize(aOD.distance*base_value);
+    else result:=ValueToSize(base_value);
+  end;
+end;
+
+procedure drawCanvasBox(aCanvas:TCanvas;aPoint:TPoint;aSize:integer);inline;
+begin
+  aCanvas.Rectangle(
+    aPoint.x-aSize,
+    aPoint.y-aSize,
+    aPoint.x+aSize,
+    aPoint.y+aSize
+  );
+end;
+procedure drawCanvasCircle(aCanvas:TCanvas;aPoint:TPoint;aSize:integer);inline;
+begin
+  aCanvas.Chord(
+    aPoint.x-aSize,
+    aPoint.y-aSize,
+    aPoint.x+aSize,
+    aPoint.y+aSize,
+  0,360*16);
+end;
+procedure drawCanvasText(aCanvas:TCanvas;aPoint:TPoint;aText:string;offset_x:integer=0;offset_y:integer=0);inline;
+begin
+  aCanvas.TextOut(
+    aPoint.x+offset_x,
+    aPoint.y+offset_y,
+    aText
+  );
+end;
+procedure drawCanvasLineText(aCanvas:TCanvas;aPoint1,aPoint2:TPoint;aText:string;offset_x:integer=0;offset_y:integer=0);inline;
+begin
+  aCanvas.TextOut(
+    (aPoint1.x + aPoint2.x) div 2 + offset_x,
+    (aPoint1.y + aPoint2.y) div 2 + offset_y,
+    aText
+  );
 end;
 
 procedure TForm_Main.PaintBox_NetPaint(Sender: TObject);
 var PB:TPaintBox;
     pi:integer;
     W,H,L,R,T,B,WW,HH:{integer}double;
-    NodeLabel:TLabelTypeNode;//integer;
-    EdgeLabel:TLabelTypeEdge;//integer;
     n1,n2,a1,a2:TPoint;
-    //show_arrow,node_label,edge_label:boolean;
-    edge_width,edge_display_value,node_size:double;
-    edge_display_precision:smallint;
     node_size_value:qword;
 
 begin
@@ -1232,15 +1528,6 @@ begin
   if not assigned(netw) then exit;
   if (netw.NodeCount=0) and (netw.ActorCount=0) then exit;
 
-  //show_arrow:=paintOption.Edge.ShowArrow;//CheckBox_ShowEdgeArrow.Checked;
-  //node_label:=paintOption.Node.Shown;//CheckBox_ShowNodeLabel.Checked;
-  //edge_label:=paintOption.Edge.Shown;//CheckBox_ShowEdgeLabel.Checked;
-
-  edge_width:=paintOption.Edge.WidthOption.scale;//FloatSpinEdit_EdgeWidth.Value;
-  node_size:=paintOption.Node.SizeOption.scale;//FloatSpinEdit_NodeSize.Value;
-
-  NodeLabel:=paintOption.Node.LabelOption.LabelType;//Self.RadioGroup_NodeLabel.ItemIndex;
-  EdgeLabel:=paintOption.Edge.LabelOption.LabelType;//Self.RadioGroup_EdgeLabel.ItemIndex;
   W:=PB.Width;
   H:=PB.Height;
 
@@ -1274,151 +1561,132 @@ begin
       end;
 
   //绘制边线
-  IF paintOption.Edge.Shown{CheckBox_ShowEdges.Checked} THEN BEGIN
+  IF paintOption.Edge.Shown THEN BEGIN
     for pi:=0 to netw.EdgeCount-1 do
       with netw.Edges[pi] do
         begin
-          //计算坐标和标注数值
-          case EdgeLabel of
-            lteFrequency{3}:  begin  edge_display_value:=frequent;  edge_display_precision:=2;   end;
-            lteWeight{2}:     begin  edge_display_value:=weight;    edge_display_precision:=1;   end;
-            lteID{1}:         begin  edge_display_value:=id;        edge_display_precision:=0;   end;
-            else              begin  edge_display_value:=0;         edge_display_precision:=-1;  end;
-          end;
+          //计算坐标
           GetArrowPoint(nodes[0].paint_pos,nodes[1].paint_pos,6,n1,n2,a1,a2);
           //画线
-          PB.Canvas.Pen.Color:=clBlack;
-          PB.Canvas.Pen.Width:=trunc(edge_width*edge_display_value)+1;
+          PB.Canvas.Pen.Color:=paintOption.Edge.ColorOption.Color;
+          PB.Canvas.Pen.Width:=getEdgeScale(netw.Edges[pi],paintOption);
           PB.Canvas.Line(n1,n2);
           //画箭头
-          if paintOption.Edge.ShowArrow{show_arrow} then begin
+          if paintOption.Edge.ShowArrow then begin
             PB.Canvas.Brush.Style:=bsSolid;
-            PB.Canvas.Brush.Color:=clBlack;
-            //PB.Canvas.Pen.Color:=clBlack;
-            //PB.Canvas.Pen.Color:=clBlack;
+            PB.Canvas.Brush.Color:=paintOption.Edge.ColorOption.Color;
             PB.Canvas.Polygon([n2,a1,a2]);
           end;
           //标注
-          IF paintOption.Edge.LabelOption.Enabled{edge_label} THEN BEGIN
+          IF paintOption.Edge.LabelOption.Enabled THEN BEGIN
             PB.Canvas.Brush.Style:=bsClear;
-            PB.Canvas.Font.Size:=10;
-            PB.Canvas.Font.Color:=clBlack;
-            if edge_display_precision>=0 then
-              PB.Canvas.TextOut(
-                (nodes[0].paint_pos.x+nodes[1].paint_pos.x) div 2,
-                (nodes[0].paint_pos.y+nodes[1].paint_pos.y) div 2,
-                FloatToStrF(edge_display_value,ffFixed,1,edge_display_precision)
-              );
+            PB.Canvas.Font.Assign(paintOption.Edge.LabelOption.LabelFont);
+            drawCanvasLineText(
+              PB.Canvas,nodes[0].paint_pos,nodes[1].paint_pos,
+              getEdgeLabel(netw.Edges[pi],paintOption)
+            );
           END;
         end;
   END;
 
   //绘制OD
-  IF paintOption.OD.Shown{CheckBox_ShowODs.Checked} THEN BEGIN
+  IF paintOption.OD.Shown THEN BEGIN
     for pi:=0 to netw.ODCount-1 do
       with netw.ODs[pi] do
         begin
           //计算坐标和标注数值
           GetArrowPoint(actors[0].paint_pos,actors[1].paint_pos,6,n1,n2,a1,a2);
           //画线
-          PB.Canvas.Pen.Color:=clBlack;
-          PB.Canvas.Pen.Width:=1;
+          PB.Canvas.Pen.Color:=paintOption.OD.ColorOption.Color;
+          PB.Canvas.Pen.Width:=trunc(paintOption.OD.WidthOption.Scale);
           PB.Canvas.Line(n1,n2);
           //画箭头
-          if paintOption.OD.ShowArrow{show_arrow} then begin
+          if paintOption.OD.ShowArrow then begin
             PB.Canvas.Brush.Style:=bsSolid;
-            PB.Canvas.Brush.Color:=clBlack;
-            //PB.Canvas.Pen.Color:=clBlack;
-            //PB.Canvas.Pen.Color:=clBlack;
+            PB.Canvas.Brush.Color:=paintOption.OD.ColorOption.Color;
             PB.Canvas.Polygon([n2,a1,a2]);
           end;
+          //标注
+          IF paintOption.OD.LabelOption.Enabled THEN BEGIN
+            PB.Canvas.Brush.Style:=bsClear;
+            PB.Canvas.Font.Assign(paintOption.OD.LabelOption.LabelFont);
+            drawCanvasLineText(
+              PB.Canvas,actors[0].paint_pos,actors[1].paint_pos,
+              getODLabel(netw.ODs[pi],paintOption)
+            );
+          END;
         end;
   END;
 
   //绘制顶点标注
-  IF paintOption.Node.Shown{CheckBox_ShowNodes.Checked} THEN BEGIN
-    IF paintOption.Node.LabelOption.Enabled{node_label} THEN BEGIN
+  IF paintOption.Node.Shown THEN BEGIN
+    IF paintOption.Node.LabelOption.Enabled THEN BEGIN
       PB.Canvas.Brush.Style:=bsClear;
-      PB.Canvas.Font.Color:=clRed;
-      PB.Canvas.Font.Size:=10;
+      PB.Canvas.Font.Assign(paintOption.Node.LabelOption.LabelFont);
       for pi:=0 to netw.NodeCount-1 do
-        with netw.Nodes[pi] do
-          begin
-            case NodeLabel of
-              ltnResult{4}:begin
-                if is_na(CalcResult) then
-                  PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,'N/A')
-                else
-                  PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,FloatToStrF(CalcResult,ffFixed,1,1));
-              end;
-              ltnGroup{3}:   PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(Group));
-              ltnName{2}:    PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,Utf8toWinCP(name));
-              ltnID{1}:      PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(id));
-              else ;
-            end;
-          end;
+        drawCanvasText(
+          PB.Canvas,netw.Nodes[pi].paint_pos,
+          getNodeLabel(netw.Nodes[pi],paintOption),
+        10,0);
     END;
   END;
 
   //绘制顶点符号
-  IF paintOption.Node.Shown{CheckBox_ShowNodes.Checked} THEN BEGIN
+  IF paintOption.Node.Shown THEN BEGIN
     PB.Canvas.Brush.Style:=bsSolid;
-    PB.Canvas.Brush.Color:=clRed;
+    PB.Canvas.Brush.Color:=paintOption.Node.ColorOption.Color;
     PB.Canvas.Pen.Width:=1;
     PB.Canvas.Pen.Color:=clBlack;
-    for pi:=0 to netw.NodeCount-1 do
-      with netw.Nodes[pi] do
-        begin
-          PB.Canvas.Brush.Color:=Color;
-          if NodeLabel=ltnResult{4} then begin
-            if is_na(CalcResult) then
-              node_size_value:=0
-            else
-              node_size_value:=trunc(CalcResult*node_size/2);
-          end else begin
-            node_size_value:=5;
-          end;
-          PB.Canvas.Rectangle(
-            paint_pos.x-node_size_value,
-            paint_pos.y-node_size_value,
-            paint_pos.x+node_size_value,
-            paint_pos.y+node_size_value
-          );
-          //PB.Canvas.Chord(paint_pos.x-5,paint_pos.y-5,paint_pos.x+5,paint_pos.y+5,0,360*16);
-        end;
+    for pi:=0 to netw.NodeCount-1 do begin
+      PB.Canvas.Brush.Color:=netw.Nodes[pi].Color;//这个color不应该在节点属性里头，后续需要剥离出来
+      node_size_value:=getNodeScale(netw.Nodes[pi],paintOption);
+      drawCanvasBox(PB.Canvas,netw.Nodes[pi].paint_pos,node_size_value);
+    end;
   END;
 
   //绘制行动者标注
-  IF paintOption.Actor.Shown{CheckBox_ShowActors.Checked} THEN BEGIN
-    IF paintOption.Actor.Shown{node_label} THEN BEGIN
+  IF paintOption.Actor.Shown THEN BEGIN
+    IF paintOption.Actor.LabelOption.Enabled THEN BEGIN
       PB.Canvas.Brush.Style:=bsClear;
-      PB.Canvas.Font.Color:=clBlue;
-      PB.Canvas.Font.Size:=8;
+      PB.Canvas.Font.Assign(paintOption.Actor.LabelOption.LabelFont);
       for pi:=0 to netw.ActorCount-1 do
-        with netw.Actors[pi] do
-          PB.Canvas.TextOut(paint_pos.x+10,paint_pos.y,IntToStr(id));
+        drawCanvasText(
+          PB.Canvas,netw.Actors[pi].paint_pos,
+          getActorLabel(netw.Actors[pi],paintOption),
+        10,0);
     END;
   END;
 
   //绘制行动者符号
-  IF paintOption.Actor.Shown{CheckBox_ShowActors.Checked} THEN BEGIN
-    PB.Canvas.Brush.Style:=bsSolid;
+  IF paintOption.Actor.Shown THEN BEGIN
     PB.Canvas.Pen.Width:=1;
     PB.Canvas.Pen.Color:=clBlack;
-    for pi:=0 to netw.ActorCount-1 do
-      with netw.Actors[pi] do
-        begin
-          PB.Canvas.Brush.Color:=clBlue;
-          //if NodeLabel=4 then node_size_value:=trunc(CalcResult*node_size/2) else node_size_value:=5;
-          node_size_value:=3;
-          PB.Canvas.Chord(
-            paint_pos.x-node_size_value,
-            paint_pos.y-node_size_value,
-            paint_pos.x+node_size_value,
-            paint_pos.y+node_size_value,
-          0,360*16);
-        end;
+    PB.Canvas.Brush.Style:=bsSolid;
+    PB.Canvas.Brush.Color:=paintOption.Actor.ColorOption.Color;
+    for pi:=0 to netw.ActorCount-1 do begin
+      node_size_value:=getActorScale(netw.Actors[pi],paintOption);
+      drawCanvasCircle(PB.Canvas,netw.Actors[pi].paint_pos,node_size_value);
+    end;
   END;
+end;
+
+procedure TForm_Main.RadioGroup_ActorLabelTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.Actor.LabelOption.LabelType:=ltaID;
+    2:paintOption.Actor.LabelOption.LabelType:=ltaName;
+    else paintOption.Actor.LabelOption.LabelType:=ltaNone;
+  end;
+  Repaint;
+end;
+
+procedure TForm_Main.RadioGroup_ActorScaleTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    0:paintOption.Actor.SizeOption.ScaleType:=staNone;
+    else paintOption.Actor.SizeOption.ScaleType:=staNone;
+  end;
+  Repaint;
 end;
 
 procedure TForm_Main.RadioGroup_EdgeLabelTypeClick(Sender: TObject);
@@ -1432,6 +1700,16 @@ begin
   Repaint;
 end;
 
+procedure TForm_Main.RadioGroup_EdgeScaleTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.Edge.WidthOption.ScaleType:=steWeight;
+    2:paintOption.Edge.WidthOption.ScaleType:=steFrequency;
+    else paintOption.Edge.WidthOption.ScaleType:=steNone;
+  end;
+  Repaint;
+end;
+
 procedure TForm_Main.RadioGroup_NodeLabelTypeClick(Sender: TObject);
 begin
   case (Sender as TRadioGroup).ItemIndex of
@@ -1440,6 +1718,34 @@ begin
     3:paintOption.Node.LabelOption.LabelType:=ltnGroup;
     4:paintOption.Node.LabelOption.LabelType:=ltnResult;
     else paintOption.Node.LabelOption.LabelType:=ltnNone;
+  end;
+  Repaint;
+end;
+
+procedure TForm_Main.RadioGroup_NodeScaleTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.Node.SizeOption.ScaleType:=stnResult;
+    else paintOption.Node.SizeOption.ScaleType:=stnNone;
+  end;
+  Repaint;
+end;
+
+procedure TForm_Main.RadioGroup_ODLabelTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.OD.LabelOption.LabelType:=ltoID;
+    2:paintOption.OD.LabelOption.LabelType:=ltoDist;
+    else paintOption.OD.LabelOption.LabelType:=ltoNone;
+  end;
+  Repaint;
+end;
+
+procedure TForm_Main.RadioGroup_ODScaleTypeClick(Sender: TObject);
+begin
+  case (Sender as TRadioGroup).ItemIndex of
+    1:paintOption.OD.WidthOption.ScaleType:=stoDist;
+    else paintOption.OD.WidthOption.ScaleType:=stoNone;
   end;
   Repaint;
 end;
@@ -1560,6 +1866,7 @@ end;
 
 procedure TForm_Main.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  paintOption.Free;
   netw.Free;
 end;
 
@@ -1581,9 +1888,27 @@ begin
   Repaint;
 end;
 
+procedure TForm_Main.CheckBox_ShowODArrowClick(Sender: TObject);
+begin
+  paintOption.OD.ShowArrow:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.CheckBox_ShowODLabelClick(Sender: TObject);
+begin
+  paintOption.OD.LabelOption.Enabled:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
 procedure TForm_Main.CheckBox_ShowODsClick(Sender: TObject);
 begin
   paintOption.OD.Shown:=(Sender as TCheckBox).Checked;
+  Repaint;
+end;
+
+procedure TForm_Main.FloatSpinEdit_ActorSizeEditingDone(Sender: TObject);
+begin
+  paintOption.Actor.SizeOption.scale:=(Sender as TFloatSpinEdit).Value;
   Repaint;
 end;
 
@@ -1596,6 +1921,12 @@ end;
 procedure TForm_Main.FloatSpinEdit_NodeSizeEditingDone(Sender: TObject);
 begin
   paintOption.Node.SizeOption.scale:=(Sender as TFloatSpinEdit).Value;
+  Repaint;
+end;
+
+procedure TForm_Main.FloatSpinEdit_ODWidthEditingDone(Sender: TObject);
+begin
+  paintOption.OD.WidthOption.scale:=(Sender as TFloatSpinEdit).Value;
   Repaint;
 end;
 
@@ -1644,9 +1975,10 @@ begin
   Repaint;
 end;
 
-procedure TForm_Main.UpdatePaintOptionToForm(a_paintOption:TPaintOption);
+procedure TForm_Main.UpdatePaintOptionToForm(aPaintOption:TPaintOption);
 begin
-  with a_paintOption do begin
+  with aPaintOption do begin
+    //Nodes
     CheckBox_ShowNodes.Checked:=Node.Shown;
     CheckBox_ShowNodeLabel.Checked:=Node.LabelOption.Enabled;
     case Node.LabelOption.LabelType of
@@ -1657,7 +1989,12 @@ begin
       else RadioGroup_NodeLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_NodeSize.Value:=Node.SizeOption.scale;
+    case Node.SizeOption.ScaleType of
+      stnResult:RadioGroup_NodeScaleType.ItemIndex:=1;
+      else RadioGroup_NodeScaleType.ItemIndex:=0;
+    end;
 
+    //Edges
     CheckBox_ShowEdges.Checked:=Edge.Shown;
     CheckBox_ShowEdgeLabel.Checked:=Edge.LabelOption.Enabled;
     CheckBox_ShowEdgeArrow.Checked:=Edge.ShowArrow;
@@ -1668,14 +2005,45 @@ begin
       else RadioGroup_EdgeLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_EdgeWidth.Value:=Edge.WidthOption.scale;
+    case Edge.WidthOption.ScaleType of
+      steWeight:RadioGroup_EdgeScaleType.ItemIndex:=1;
+      steFrequency:RadioGroup_EdgeScaleType.ItemIndex:=2;
+      else RadioGroup_EdgeScaleType.ItemIndex:=0;
+    end;
 
+    //Actors
     CheckBox_ShowActors.Checked:=Actor.Shown;
     CheckBox_ShowActorLabel.Checked:=Actor.LabelOption.Enabled;
+    case Actor.LabelOption.LabelType of
+      ltaID:RadioGroup_ActorLabelType.ItemIndex:=1;
+      ltaName:RadioGroup_ActorLabelType.ItemIndex:=2;
+      else RadioGroup_ActorLabelType.ItemIndex:=0;
+    end;
+    FloatSpinEdit_ActorSize.Value:=Actor.SizeOption.scale;
+    case Actor.SizeOption.ScaleType of
+      staNone:RadioGroup_ActorScaleType.ItemIndex:=0;
+      else RadioGroup_ActorScaleType.ItemIndex:=0;
+    end;
 
+    //ODs
     CheckBox_ShowODs.Checked:=OD.Shown;
-    //CheckBox_ShowODLabel.Checked:=OD.LabelOption.Enabled;
+    CheckBox_ShowODLabel.Checked:=OD.LabelOption.Enabled;
+    CheckBox_ShowODArrow.Checked:=OD.ShowArrow;
+    case OD.LabelOption.LabelType of
+      ltoID:RadioGroup_ODLabelType.ItemIndex:=1;
+      ltoDist:RadioGroup_ODLabelType.ItemIndex:=2;
+      else RadioGroup_ODLabelType.ItemIndex:=0;
+    end;
+    FloatSpinEdit_ODWidth.Value:=OD.WidthOption.scale;
+    case OD.WidthOption.ScaleType of
+      stoDist:RadioGroup_ODScaleType.ItemIndex:=1;
+      else RadioGroup_ODScaleType.ItemIndex:=0;
+    end;
 
   end;
+
+  Application.ProcessMessages;
+
 end;
 
 end.

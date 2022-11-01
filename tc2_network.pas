@@ -22,18 +22,35 @@ type
 
   TLabelTypeNode = (ltnNone, ltnID, ltnName, ltnGroup, ltnResult);
   TLabelTypeEdge = (lteNone, lteID, lteWeight, lteFrequency);
-  TLabelTypeActor = (ltaNone);
-  TLabelTypeOD = (ltoNone);
+  TLabelTypeActor = (ltaNone, ltaID, ltaName);
+  TLabelTypeOD = (ltoNone, ltoID, ltoDist);
 
-  TPaintOption = record
+  TScaleTypeNode = (stnNone, stnResult);
+  TScaleTypeEdge = (steNone, steWeight, steFrequency);
+  TScaleTypeActor = (staNone);
+  TScaleTypeOD = (stoNone, stoDist);
+
+  TColorTypeNode = (ctnNone);
+  TColorTypeEdge = (cteNone);
+  TColorTypeActor = (ctaNone);
+  TColorTypeOD = (ctoNone);
+
+
+  TPaintOption = class
     Node:record
       Shown:boolean;
       LabelOption:record
         Enabled:boolean;
         LabelType:TLabelTypeNode;
+        LabelFont:TFont;
       end;
       SizeOption:record
-        scale:double;
+        Scale:double;
+        ScaleType:TScaleTypeNode;
+      end;
+      ColorOption:record
+        Color:TColor;
+        ColorType:TColorTypeNode;
       end;
     end;
     Edge:record
@@ -42,9 +59,15 @@ type
       LabelOption:record
         Enabled:boolean;
         LabelType:TLabelTypeEdge;
+        LabelFont:TFont;
       end;
       WidthOption:record
-        scale:double;
+        Scale:double;
+        ScaleType:TScaleTypeEdge;
+      end;
+      ColorOption:record
+        Color:TColor;
+        ColorType:TColorTypeEdge;
       end;
     end;
     Actor:record
@@ -52,6 +75,15 @@ type
       LabelOption:record
         Enabled:boolean;
         LabelType:TLabelTypeActor;
+        LabelFont:TFont;
+      end;
+      SizeOption:record
+        Scale:double;
+        ScaleType:TScaleTypeActor;
+      end;
+      ColorOption:record
+        Color:TColor;
+        ColorType:TColorTypeActor;
       end;
     end;
     OD:record
@@ -60,11 +92,23 @@ type
       LabelOption:record
         Enabled:boolean;
         LabelType:TLabelTypeOD;
+        LabelFont:TFont;
+      end;
+      WidthOption:record
+        Scale:double;
+        ScaleType:TScaleTypeOD;
+      end;
+      ColorOption:record
+        Color:TColor;
+        ColorType:TColorTypeOD;
       end;
     end;
     Bound:record
       Top,Left,Right,Bottom:double;
     end;
+  public
+    constructor Create;
+    destructor Destroy; override;
   end;
 
 
@@ -573,6 +617,7 @@ begin
   tmp.actors[0]:=a1;
   tmp.actors[1]:=a2;
   tmp.fid:=0;
+  tmp.id:=FActorOD.Count;
   FActorOD.Add(tmp);
   result:=tmp;
 end;
@@ -753,6 +798,7 @@ end;
 procedure TTC2_Network.ComplementGraphy(indirect:boolean=true);
 var pi,pj,pk:longint;
 begin
+  //补图算法有问题
   for pi:=0 to EdgeCount-1 do
     Edges[pi].enabled:=false;
   for pi:=0 to NodeCount-1 do
@@ -1754,6 +1800,26 @@ begin
       if ty>max_y then max_y:=ty;
       if ty<min_y then min_y:=ty;
     end;
+end;
+
+
+{ TPaintOption }
+constructor TPaintOption.Create;
+begin
+  Inherited Create;
+  Node.LabelOption.LabelFont:=TFont.Create;
+  Edge.LabelOption.LabelFont:=TFont.Create;
+  Actor.LabelOption.LabelFont:=TFont.Create;
+  OD.LabelOption.LabelFont:=TFont.Create;
+end;
+
+destructor TPaintOption.Destroy;
+begin
+  Node.LabelOption.LabelFont.Free;
+  Edge.LabelOption.LabelFont.Free;
+  Actor.LabelOption.LabelFont.Free;
+  OD.LabelOption.LabelFont.Free;
+  Inherited Destroy;
 end;
 
 end.
