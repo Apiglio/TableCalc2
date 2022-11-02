@@ -23,10 +23,10 @@ object Form_Main: TForm_Main
     Height = 666
     Top = 0
     Width = 360
-    ActivePage = TabSheet_Layout
+    ActivePage = TabSheet_DataView
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinWidth = 300
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 0
     object TabSheet_AufScript: TTabSheet
       Caption = 'AufScript'
@@ -907,8 +907,8 @@ object Form_Main: TForm_Main
     end
     object TabSheet_DataView: TTabSheet
       Caption = '数据视图'
-      ClientHeight = 794
-      ClientWidth = 504
+      ClientHeight = 629
+      ClientWidth = 352
       object PageControl_DataView: TPageControl
         AnchorSideLeft.Control = TabSheet_DataView
         AnchorSideTop.Control = TabSheet_DataView
@@ -917,9 +917,9 @@ object Form_Main: TForm_Main
         AnchorSideBottom.Control = TabSheet_DataView
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 764
+        Height = 599
         Top = 0
-        Width = 504
+        Width = 352
         ActivePage = TabSheet_OD
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Bottom = 30
@@ -987,8 +987,8 @@ object Form_Main: TForm_Main
         end
         object TabSheet_OD: TTabSheet
           Caption = 'OD'
-          ClientHeight = 727
-          ClientWidth = 496
+          ClientHeight = 562
+          ClientWidth = 344
           object StringGrid_DV_OD: TStringGrid
             AnchorSideLeft.Control = TabSheet_OD
             AnchorSideTop.Control = TabSheet_OD
@@ -997,9 +997,9 @@ object Form_Main: TForm_Main
             AnchorSideBottom.Control = TabSheet_OD
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 727
+            Height = 562
             Top = 0
-            Width = 496
+            Width = 344
             Anchors = [akTop, akLeft, akRight, akBottom]
             AutoEdit = False
             TabOrder = 0
@@ -1021,9 +1021,9 @@ object Form_Main: TForm_Main
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet_DataView
         AnchorSideBottom.Side = asrBottom
-        Left = 424
+        Left = 272
         Height = 30
-        Top = 764
+        Top = 599
         Width = 80
         Anchors = [akRight, akBottom]
         Caption = '导出'
@@ -1037,8 +1037,8 @@ object Form_Main: TForm_Main
         AnchorSideRight.Control = Button_Export_SG
         Left = 0
         Height = 32
-        Top = 763
-        Width = 424
+        Top = 598
+        Width = 272
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 2
         Text = 'StringGrid'

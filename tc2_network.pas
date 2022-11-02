@@ -5,7 +5,8 @@ unit tc2_network;
 interface
 
 uses
-  Classes, SysUtils, Dialogs, Graphics, TypInfo, fpjson, jsonparser, Apiglio_Useful;
+  Classes, SysUtils, Dialogs, Graphics, Grids,
+  TypInfo, fpjson, jsonparser, Apiglio_Useful;
 
 const
       //NA:double=$7fffffffffffffff;
@@ -283,6 +284,12 @@ type
 
     procedure LoadODsFromGeoJson(filename:string);
     procedure SaveODsToGeoJson(filename:string);
+
+  public
+    procedure NodesToStringGrid(SG:TStringGrid);
+    procedure EdgesToStringGrid(SG:TStringGrid);
+    procedure ActorsToStringGrid(SG:TStringGrid);
+    procedure ODsToStringGrid(SG:TStringGrid);
 
 
   private
@@ -1251,6 +1258,105 @@ procedure TTC2_Network.SaveODsToGeoJson(filename:string);
 begin
 
 end;
+
+procedure TTC2_Network.NodesToStringGrid(SG:TStringGrid);
+var pi:integer;
+begin
+  SG.BeginUpdate;
+  SG.Clear;
+  SG.ColCount:=6;
+  SG.Cells[0,0]:='ID';
+  SG.Cells[1,0]:='Name';
+  SG.Cells[2,0]:='group';
+  SG.Cells[3,0]:='result';
+  SG.Cells[4,0]:='geo_x';
+  SG.Cells[5,0]:='geo_y';
+  SG.RowCount:=netw.NodeCount+1;
+  for pi:=0 to netw.NodeCount-1 do with netw.Nodes[pi] do
+    begin
+      SG.Cells[0,pi+1]:=IntToStr(id);
+      SG.Cells[1,pi+1]:=name;
+      SG.Cells[2,pi+1]:=IntToStr(Group);
+      SG.Cells[3,pi+1]:=FloatToStrF(CalcResult,ffFixed,4,6);
+      SG.Cells[4,pi+1]:=FloatToStrF(latlong.x,ffFixed,7,10);
+      SG.Cells[5,pi+1]:=FloatToStrF(latlong.y,ffFixed,7,10);
+    end;
+  SG.EndUpdate(true);
+end;
+
+procedure TTC2_Network.EdgesToStringGrid(SG:TStringGrid);
+var pi:integer;
+begin
+  SG.BeginUpdate;
+  SG.Clear;
+  SG.ColCount:=5;
+  SG.Cells[0,0]:='ID';
+  SG.Cells[1,0]:='权重';
+  SG.Cells[2,0]:='node_1';
+  SG.Cells[3,0]:='node_2';
+  SG.Cells[4,0]:='流量';
+  SG.RowCount:=netw.EdgeCount+1;
+  for pi:=0 to netw.EdgeCount-1 do with netw.Edges[pi] do
+    begin
+      SG.Cells[0,pi+1]:=IntToStr(id);
+      SG.Cells[1,pi+1]:=FloatToStrF(weight,ffFixed,4,6);
+      if nodes[0]<>nil then SG.Cells[2,pi+1]:=IntToStr(nodes[0].id);
+      if nodes[1]<>nil then SG.Cells[3,pi+1]:=IntToStr(nodes[1].id);
+      SG.Cells[4,pi+1]:=FloatToStrF(frequent,ffFixed,4,6);
+    end;
+  SG.EndUpdate(true);
+end;
+
+procedure TTC2_Network.ActorsToStringGrid(SG:TStringGrid);
+var pi:integer;
+begin
+  SG.BeginUpdate;
+  SG.Clear;
+  SG.ColCount:=6;
+  SG.Cells[0,0]:='ID';
+  SG.Cells[1,0]:='Name';
+  SG.Cells[2,0]:='Edge';
+  SG.Cells[3,0]:='dist';
+  SG.Cells[4,0]:='n_dist_1';
+  SG.Cells[5,0]:='n_dist_2';
+  SG.RowCount:=netw.ActorCount+1;
+  for pi:=0 to netw.ActorCount-1 do with netw.Actors[pi] do
+    begin
+      SG.Cells[0,pi+1]:=IntToStr(id);
+      SG.Cells[1,pi+1]:=name;
+      if edge<>nil then SG.Cells[2,pi+1]:=IntToStr(edge.id);
+      SG.Cells[3,pi+1]:=FloatToStrF(distance,ffFixed,4,6);
+      SG.Cells[4,pi+1]:=FloatToStrF(node_distance[0],ffFixed,4,6);
+      SG.Cells[5,pi+1]:=FloatToStrF(node_distance[1],ffFixed,4,6);
+    end;
+  SG.EndUpdate(true);
+end;
+
+procedure TTC2_Network.ODsToStringGrid(SG:TStringGrid);
+var pi:integer;
+begin
+  SG.BeginUpdate;
+  SG.Clear;
+  SG.ColCount:=5;
+  SG.Cells[0,0]:='ID';
+  SG.Cells[1,0]:='actor_1';
+  SG.Cells[2,0]:='actor_2';
+  SG.Cells[3,0]:='dist';
+  SG.Cells[4,0]:='FID';
+  SG.RowCount:=netw.ODCount+1;
+  for pi:=0 to netw.ODCount-1 do with netw.ODs[pi] do
+    begin
+      SG.Cells[0,pi+1]:=IntToStr(id);
+      if actors[0]<>nil then SG.Cells[1,pi+1]:=IntToStr(actors[0].id);
+      if actors[1]<>nil then SG.Cells[2,pi+1]:=IntToStr(actors[1].id);
+      SG.Cells[3,pi+1]:=FloatToStrF(distance,ffFixed,4,6);
+      SG.Cells[4,pi+1]:=IntToStr(fid);
+    end;
+  SG.EndUpdate(true);
+end;
+
+
+
 
 procedure one_step(node:TTC2_Node);
 var tmpPTR,tmpE2:Pointer;
