@@ -16,7 +16,15 @@ type
   { TForm_Main }
 
   TForm_Main = class(TForm)
+    Button_ActorDetailedOption: TButton;
+    Button_ODDetailedOption: TButton;
+    Button_NodeDetailedOption: TButton;
     Button_Export_SG: TButton;
+    Button_EdgeDetailedOption: TButton;
+    CheckBox_NodeScaleLog: TCheckBox;
+    CheckBox_EdgeScaleLog: TCheckBox;
+    CheckBox_ActorScaleLog: TCheckBox;
+    CheckBox_ODScaleLog: TCheckBox;
     CheckBox_ShowODArrow: TCheckBox;
     CheckBox_ShowODLabel: TCheckBox;
     CheckBox_ShowODs: TCheckBox;
@@ -43,17 +51,20 @@ type
     Label_NodeSize: TLabel;
     Label_LayoutOpt: TLabel;
     MainMenu1: TMainMenu;
+    MenuItem_Network_OD_random: TMenuItem;
+    MenuItem_Network_CreateOD_div01: TMenuItem;
+    MenuItem_Network_OD_importJSON: TMenuItem;
     MenuItem_Actor_ODFrequency: TMenuItem;
     MenuItem_Calc_div01: TMenuItem;
     MenuItem_Calc_Actor: TMenuItem;
-    MenuItem_Network_CreateOD_block: TMenuItem;
+    MenuItem_Network_OD_block: TMenuItem;
     MenuItem_Network_CreateOD: TMenuItem;
     MenuItem_Network_ActorEdgeUpdate: TMenuItem;
     MenuItem_Network_div03: TMenuItem;
     MenuItem_Network_genRandomKPlex: TMenuItem;
     MenuItem_Network_genRandomNClique: TMenuItem;
-    MenuItem_Actor_ImportGeoJSON: TMenuItem;
-    MenuItem_Actor_Import: TMenuItem;
+    MenuItem_Network_Actor_ImportGeoJSON: TMenuItem;
+    MenuItem_Network_Actor: TMenuItem;
     MenuItem_Layout_Geo: TMenuItem;
     MenuItem_Layout_Loop: TMenuItem;
     MenuItem_Layout_Random: TMenuItem;
@@ -118,8 +129,16 @@ type
     TabSheet_AufScript: TTabSheet;
     TrackBar_Zone: TTrackBar;
     TrackBar_Alpha: TTrackBar;
+    procedure Button_ActorDetailedOptionClick(Sender: TObject);
+    procedure Button_EdgeDetailedOptionClick(Sender: TObject);
     procedure Button_Export_SGClick(Sender: TObject);
+    procedure Button_NodeDetailedOptionClick(Sender: TObject);
+    procedure Button_ODDetailedOptionClick(Sender: TObject);
     procedure Button_runClick(Sender: TObject);
+    procedure CheckBox_EdgeScaleLogClick(Sender: TObject);
+    procedure CheckBox_ActorScaleLogClick(Sender: TObject);
+    procedure CheckBox_ODScaleLogClick(Sender: TObject);
+    procedure CheckBox_NodeScaleLogClick(Sender: TObject);
     procedure CheckBox_ShowActorLabelClick(Sender: TObject);
     procedure CheckBox_ShowEdgeLabelClick(Sender: TObject);
     procedure CheckBox_ShowNodeLabelClick(Sender: TObject);
@@ -137,7 +156,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Frame_AufScript1Resize(Sender: TObject);
-    procedure MenuItem_Actor_ImportGeoJSONClick(Sender: TObject);
+    procedure MenuItem_Network_Actor_ImportGeoJSONClick(Sender: TObject);
     procedure MenuItem_Actor_ODFrequencyClick(Sender: TObject);
     procedure MenuItem_Calc_BCClick(Sender: TObject);
     procedure MenuItem_Calc_CCClick(Sender: TObject);
@@ -152,7 +171,7 @@ type
     procedure MenuItem_Layout_LoopClick(Sender: TObject);
     procedure MenuItem_Layout_RandomClick(Sender: TObject);
     procedure MenuItem_Network_ActorEdgeUpdateClick(Sender: TObject);
-    procedure MenuItem_Network_CreateOD_blockClick(Sender: TObject);
+    procedure MenuItem_Network_OD_blockClick(Sender: TObject);
     procedure MenuItem_Network_disweightClick(Sender: TObject);
     procedure MenuItem_Network_ExportAdjacentClick(Sender: TObject);
     procedure MenuItem_Network_ExportEdgelistClick(Sender: TObject);
@@ -162,6 +181,8 @@ type
     procedure MenuItem_Network_ImportEdgelistClick(Sender: TObject);
     procedure MenuItem_Network_ImportGeoJSONClick(Sender: TObject);
     procedure MenuItem_Network_indirectClick(Sender: TObject);
+    procedure MenuItem_Network_OD_importJSONClick(Sender: TObject);
+    procedure MenuItem_Network_OD_randomClick(Sender: TObject);
     procedure MenuItem_Network_WeightReverseClick(Sender: TObject);
     procedure PaintBox_NetPaint(Sender: TObject);
     procedure RadioGroup_ActorLabelTypeClick(Sender: TObject);
@@ -223,17 +244,23 @@ begin
   else result:=FloatToStrF(f,ffFixed,3,3);
   result:=Usf.left_adjust(result,8);
 end;
-function ValueToSize(value:double;times:double=1):integer;
+function ValueToSize(value:double;times:double=1;Logarithm:boolean=false):integer;
 begin
   result:=0;
   if is_na(value) then exit;
-  result:=trunc(value*times);
+  if Logarithm then
+    result:=trunc(10*ln(value*times+1))
+  else
+    result:=trunc(value*times);
   if value<0 then result:=0;
   if value>1000 then result:=1000;
 end;
-function ValueToSize(value:longint;times:double=1):integer;
+function ValueToSize(value:longint;times:double=1;Logarithm:boolean=false):integer;
 begin
-  result:=trunc(value*times);
+  if Logarithm then
+    result:=trunc(10*ln(value*times+1))
+  else
+    result:=trunc(value*times);
   if value<0 then result:=0;
   if value>1000 then result:=1000;
 end;
@@ -300,6 +327,11 @@ begin
     end;
   if arv.VarType=ARV_Raw then AufScpt.writeln('新建节点#'+IntToStr(index))
   else dword_to_arv(index,arv);
+end;
+procedure FuncClearActor(Sender:TObject);
+begin
+  netw.ClearODs;
+  netw.ClearActors;
 end;
 procedure FuncAddActor(Sender:TObject);
 var AAuf:TAuf;
@@ -556,22 +588,18 @@ end;
 
 
 procedure FuncUpdateActorsEdge(Sender:TObject);
-var AAuf:TAuf;
-    AufScpt:TAufScript;
 begin
-  AufScpt:=Sender as TAufScript;
-  AAuf:=AufScpt.Auf as TAuf;
   netw.ActorEdgeUpdate(Sender,@AufScptWritelnFunc);
 end;
-
-procedure FuncBuildBlockOD(Sender:TObject);
-var AAuf:TAuf;
-    AufScpt:TAufScript;
+procedure FuncClearOD(Sender:TObject);
 begin
-  AufScpt:=Sender as TAufScript;
-  AAuf:=AufScpt.Auf as TAuf;
+  netw.ClearODs;
+end;
+procedure FuncBuildBlockOD(Sender:TObject);
+begin
   netw.BuildODAsBlock;
 end;
+
 procedure FuncBuildRandomOD(Sender:TObject);
 var AAuf:TAuf;
     AufScpt:TAufScript;
@@ -1003,6 +1031,10 @@ end;
 procedure FuncLayoutDraw(Sender:TObject);
 begin
   Form_Main.PaintBox_Net.Repaint;
+  netw.NodesToStringGrid(Form_Main.StringGrid_DV_Node);
+  netw.EdgesToStringGrid(Form_Main.StringGrid_DV_Edge);
+  netw.ActorsToStringGrid(Form_Main.StringGrid_DV_Actor);
+  netw.ODsToStringGrid(Form_Main.StringGrid_DV_OD);
 end;
 
 procedure FuncProcEnding(Sender:TObject);
@@ -1030,6 +1062,12 @@ begin
   Frame_AufScript1.Auf.Script.add_func('net.build.rand',@FuncBuildRand,'N,P','创建随机网络');
   //Frame_AufScript1.Auf.Script.add_func('net.build.n_clique',@FuncBuildRandNClique,'N,n','创建随机n-Clique');
 
+  Frame_AufScript1.Auf.Script.add_func('net.inp.adj',@FuncImportAdjCSV,'filename','导入邻接矩阵');
+  Frame_AufScript1.Auf.Script.add_func('net.inp.json',@FuncImportGeoJson,'filename','导入GeoJson');
+  Frame_AufScript1.Auf.Script.add_func('net.out.adj',@FuncExportAdjCSV,'filename','输出邻接矩阵');
+  Frame_AufScript1.Auf.Script.add_func('net.out.json',@FuncExportGeoJson,'filename','导出GeoJson');
+
+
   Frame_AufScript1.Auf.Script.add_func('net.indirect',@FuncIndirectGraphy,'','无向图化/双向化');
   Frame_AufScript1.Auf.Script.add_func('net.indirectchk',@FuncIndirectWeightCheck,'','双向化权重修正');
   Frame_AufScript1.Auf.Script.add_func('net.removemid',@FuncRemoveMidNode,'','删除无意义的过境点');
@@ -1041,30 +1079,27 @@ begin
 
 
   Frame_AufScript1.Auf.Script.add_func('node.add',@FuncAddNode,'name[,out,x,y]','增加节点');
-  Frame_AufScript1.Auf.Script.add_func('edge.add',@FuncAddEdge,'n1,n2[,out]','增加连接');
-
   Frame_AufScript1.Auf.Script.add_func('node.addbyname',@FuncAddNodeByName,'name,x,y','根据名称增加节点');
+
+  Frame_AufScript1.Auf.Script.add_func('edge.add',@FuncAddEdge,'n1,n2[,out]','增加连接');
   Frame_AufScript1.Auf.Script.add_func('edge.addbyname',@FuncAddEdgeByName,'name1,name2','根据名称增加连接');
 
+  Frame_AufScript1.Auf.Script.add_func('actor.clear',@FuncClearActor,'','清空行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.add',@FuncAddActor,'name[,out,x,y]','增加行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.addbyname',@FuncAddActorByName,'name,x,y','根据名称增加行动者');
-  Frame_AufScript1.Auf.Script.add_func('actor.io.inp.json',@FuncImportActorFromGeoJson,'filename','导入GeoJson中的行动者');
+  Frame_AufScript1.Auf.Script.add_func('actor.inp.json',@FuncImportActorFromGeoJson,'filename','导入GeoJson中的行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.updateedge',@FuncUpdateActorsEdge,'','根据地理位置查找每一个行动者的最近边线');
 
+  Frame_AufScript1.Auf.Script.add_func('od.clear',@FuncClearOD,'','清除所有OD');
   Frame_AufScript1.Auf.Script.add_func('od.build.block',@FuncBuildBlockOD,'','在每两个行动者之间创建双向OD');
   Frame_AufScript1.Auf.Script.add_func('od.build.rand',@FuncBuildRandomOD,'P','创建随机OD');
 
-  Frame_AufScript1.Auf.Script.add_func('od.io.inp.json',@FuncImportODsFromGeoJson,'filename','导入GeoJson中的OD');
+  Frame_AufScript1.Auf.Script.add_func('od.inp.json',@FuncImportODsFromGeoJson,'filename','导入GeoJson中的OD');
 
 
   Frame_AufScript1.Auf.Script.add_func('actor.odtest',@FuncODTest,'actor1,actor2','计算两个行动者之间的最短网络路径，以此修改流量图');
   Frame_AufScript1.Auf.Script.add_func('actor.odfreq',@FuncODFrequency,'','计算每两个行动者之间的最短网络路径，以此修改流量图');
 
-
-  Frame_AufScript1.Auf.Script.add_func('io.out.adj',@FuncExportAdjCSV,'filename','输出邻接矩阵');
-  Frame_AufScript1.Auf.Script.add_func('io.inp.adj',@FuncImportAdjCSV,'filename','导入邻接矩阵');
-  Frame_AufScript1.Auf.Script.add_func('io.out.json',@FuncExportGeoJson,'filename','导出GeoJson');
-  Frame_AufScript1.Auf.Script.add_func('io.inp.json',@FuncImportGeoJson,'filename','导入GeoJson');
 
   Frame_AufScript1.Auf.Script.add_func('io.data.export',@FuncDataListExport,'filename','将数据表格导出到filename');
 
@@ -1109,6 +1144,7 @@ begin
     LabelOption.LabelFont.Size:=10;
     SizeOption.Scale:=5;
     SizeOption.ScaleType:=stnNone;
+    SizeOption.Logarithm:=false;
     ColorOption.Color:=clRed;
     ColorOption.ColorType:=ctnNone;
   end;
@@ -1122,6 +1158,7 @@ begin
     LabelOption.LabelFont.Size:=10;
     WidthOption.scale:=1;
     WidthOption.ScaleType:=steNone;
+    WidthOption.Logarithm:=false;
     ColorOption.Color:=clBlack;
     ColorOption.ColorType:=cteNone;
   end;
@@ -1134,6 +1171,7 @@ begin
     LabelOption.LabelFont.Size:=8;
     SizeOption.Scale:=5;
     SizeOption.ScaleType:=staNone;
+    SizeOption.Logarithm:=false;
     ColorOption.Color:=clBlue;
     ColorOption.ColorType:=ctaNone;
   end;
@@ -1147,6 +1185,7 @@ begin
     LabelOption.LabelFont.Size:=10;
     WidthOption.scale:=0.5;
     WidthOption.ScaleType:=stoNone;
+    WidthOption.Logarithm:=false;
     ColorOption.Color:=clGray;
     ColorOption.ColorType:=ctoNone;
   end;
@@ -1160,13 +1199,17 @@ begin
   Frame_AufScript1.FrameResize(Frame_AufScript1);
 end;
 
-procedure TForm_Main.MenuItem_Actor_ImportGeoJSONClick(Sender: TObject);
+procedure TForm_Main.MenuItem_Network_Actor_ImportGeoJSONClick(Sender: TObject);
 begin
   Dialog_TC2.Call('导出GeoJSON',['文件路径'],[]);
   MenuRunError:='导出GeoJSON错误。';
-  Frame_AufScript1.Memo_cmd.Clear;
-  Frame_AufScript1.Memo_cmd.Lines.Add('actor.io.inp.json "'+Dialog_TC2.Values[0]+'"');
-  Frame_AufScript1.Memo_cmd.Lines.Add('actor.updateedge');
+  paintOption.Actor.LabelOption.LabelType:=ltaID;
+  paintOption.Actor.LabelOption.Enabled:=true;
+  paintOption.Actor.Shown:=true;
+  UpdatePaintOptionToForm(paintOption); Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.clear "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('actor.inp.json "'+Dialog_TC2.Values[0]+'"');
+  //Frame_AufScript1.Memo_cmd.Lines.Add('actor.updateedge');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
@@ -1174,8 +1217,6 @@ procedure TForm_Main.MenuItem_Actor_ODFrequencyClick(Sender: TObject);
 begin
   paintOption.Edge.WidthOption.Scale:=2.0;
   paintOption.Edge.WidthOption.ScaleType:=steFrequency;
-  paintOption.Edge.LabelOption.LabelType:=lteFrequency;
-  paintOption.Edge.LabelOption.Enabled:=true;
   UpdatePaintOptionToForm(paintOption);
   MenuRunError:='行动者流量计算错误。';
   Frame_AufScript1.Memo_cmd.Clear;
@@ -1317,12 +1358,13 @@ begin
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
-procedure TForm_Main.MenuItem_Network_CreateOD_blockClick(Sender: TObject);
+procedure TForm_Main.MenuItem_Network_OD_blockClick(Sender: TObject);
 begin
   MenuRunError:='任意两个行动者之间创建OD错误。';
   paintOption.OD.Shown:=true;
   UpdatePaintOptionToForm(paintOption);
   Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.clear');
   Frame_AufScript1.Memo_cmd.Lines.Add('od.build.block');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
@@ -1337,7 +1379,7 @@ begin
   Dialog_TC2.Call('导出领接矩阵',['文件路径'],[]);
   MenuRunError:='导出领接矩阵错误。';
   Frame_AufScript1.Memo_cmd.Clear;
-  Frame_AufScript1.Memo_cmd.Lines.Add('io.out.adj "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.out.adj "'+Dialog_TC2.Values[0]+'"');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
@@ -1351,7 +1393,7 @@ begin
   Dialog_TC2.Call('导出GeoJSON',['文件路径'],[]);
   MenuRunError:='导出GeoJSON错误。';
   Frame_AufScript1.Memo_cmd.Clear;
-  Frame_AufScript1.Memo_cmd.Lines.Add('io.out.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.out.json "'+Dialog_TC2.Values[0]+'"');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
@@ -1372,7 +1414,7 @@ begin
   MenuRunError:='导入领接矩阵错误。';
   Frame_AufScript1.Memo_cmd.Clear;
   Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
-  Frame_AufScript1.Memo_cmd.Lines.Add('io.inp.adj "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.inp.adj "'+Dialog_TC2.Values[0]+'"');
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.loop');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
@@ -1388,7 +1430,7 @@ begin
   MenuRunError:='导入GeoJSON错误。';
   Frame_AufScript1.Memo_cmd.Clear;
   Frame_AufScript1.Memo_cmd.Lines.Add('net.clear');
-  Frame_AufScript1.Memo_cmd.Lines.Add('io.inp.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.inp.json "'+Dialog_TC2.Values[0]+'"');
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.geo');
   Frame_AufScript1.Memo_cmd.Lines.Add('net.len2weight');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
@@ -1400,6 +1442,29 @@ begin
   Frame_AufScript1.Memo_cmd.Clear;
   Frame_AufScript1.Memo_cmd.Lines.Add('net.indirect');
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_OD_importJSONClick(Sender: TObject);
+begin
+  Dialog_TC2.Call('由GeoJSON导入OD',['文件路径'],[]);
+  MenuRunError:='由GeoJSON导入OD错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.clear');
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.inp.json "'+Dialog_TC2.Values[0]+'"');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.geo');
+  //Frame_AufScript1.Memo_cmd.Lines.Add('net.removemid');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Network_OD_randomClick(Sender: TObject);
+begin
+  MenuRunError:='任意两个行动者之间随机创建OD错误。';
+  paintOption.OD.Shown:=true;
+  UpdatePaintOptionToForm(paintOption);
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.clear');
+  Frame_AufScript1.Memo_cmd.Lines.Add('od.build.rand');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
@@ -1448,7 +1513,7 @@ var base_value:double;
 begin
   base_value:=aOption.Node.SizeOption.Scale;
   case aOption.Node.SizeOption.ScaleType of
-    stnResult:result:=ValueToSize(aNode.CalcResult,base_value);
+    stnResult:result:=ValueToSize(aNode.CalcResult,base_value,paintOption.Node.SizeOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
 end;
@@ -1457,8 +1522,8 @@ var base_value:double;
 begin
   base_value:=aOption.Edge.WidthOption.Scale;
   case aOption.Edge.WidthOption.ScaleType of
-    steWeight:result:=ValueToSize(aEdge.weight,base_value);
-    steFrequency:result:=ValueToSize(aEdge.frequent,base_value);
+    steWeight:result:=ValueToSize(aEdge.weight,base_value,paintOption.Edge.WidthOption.Logarithm);
+    steFrequency:result:=ValueToSize(aEdge.frequent,base_value,paintOption.Edge.WidthOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
 end;
@@ -1476,7 +1541,7 @@ var base_value:double;
 begin
   base_value:=aOption.OD.WidthOption.Scale;
   case aOption.OD.WidthOption.ScaleType of
-    stoDist:result:=ValueToSize(aOD.distance*base_value);
+    stoDist:result:=ValueToSize(aOD.distance*base_value,1,paintOption.OD.WidthOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
 end;
@@ -1570,7 +1635,8 @@ begin
           //画线
           PB.Canvas.Pen.Color:=paintOption.Edge.ColorOption.Color;
           PB.Canvas.Pen.Width:=getEdgeScale(netw.Edges[pi],paintOption);
-          PB.Canvas.Line(n1,n2);
+          //PB.Canvas.Line(n1,n2);
+          PB.Canvas.Line(nodes[0].paint_pos,nodes[1].paint_pos);
           //画箭头
           if paintOption.Edge.ShowArrow then begin
             PB.Canvas.Brush.Style:=bsSolid;
@@ -1871,10 +1937,54 @@ begin
   end;
 end;
 
+procedure TForm_Main.Button_EdgeDetailedOptionClick(Sender: TObject);
+begin
+  if ScrollBox_EdgeOption.Height>0 then ScrollBox_EdgeOption.Height:=0
+  else ScrollBox_EdgeOption.Height:=400;
+end;
+
+procedure TForm_Main.Button_ActorDetailedOptionClick(Sender: TObject);
+begin
+  if ScrollBox_ActorOption.Height>0 then ScrollBox_ActorOption.Height:=0
+  else ScrollBox_ActorOption.Height:=300;
+end;
+
+procedure TForm_Main.Button_NodeDetailedOptionClick(Sender: TObject);
+begin
+  if ScrollBox_NodeOption.Height>0 then ScrollBox_NodeOption.Height:=0
+  else ScrollBox_NodeOption.Height:=380;
+end;
+
+procedure TForm_Main.Button_ODDetailedOptionClick(Sender: TObject);
+begin
+  if ScrollBox_ODOption.Height>0 then ScrollBox_ODOption.Height:=0
+  else ScrollBox_ODOption.Height:=340;
+end;
+
 procedure TForm_Main.Button_runClick(Sender: TObject);
 begin
   EndingMessage:='';
   Frame_AufScript1.Button_runClick(Self);
+end;
+
+procedure TForm_Main.CheckBox_EdgeScaleLogClick(Sender: TObject);
+begin
+  paintOption.Edge.WidthOption.Logarithm:=(Sender as TCheckBox).Checked;
+end;
+
+procedure TForm_Main.CheckBox_ActorScaleLogClick(Sender: TObject);
+begin
+  paintOption.Actor.SizeOption.Logarithm:=(Sender as TCheckBox).Checked;
+end;
+
+procedure TForm_Main.CheckBox_ODScaleLogClick(Sender: TObject);
+begin
+  paintOption.OD.WidthOption.Logarithm:=(Sender as TCheckBox).Checked;
+end;
+
+procedure TForm_Main.CheckBox_NodeScaleLogClick(Sender: TObject);
+begin
+  paintOption.Node.SizeOption.Logarithm:=(Sender as TCheckBox).Checked;
 end;
 
 procedure TForm_Main.CheckBox_ShowActorLabelClick(Sender: TObject);
@@ -1909,6 +2019,7 @@ begin
       else RadioGroup_NodeLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_NodeSize.Value:=Node.SizeOption.scale;
+    CheckBox_NodeScaleLog.Checked:=Node.SizeOption.Logarithm;
     case Node.SizeOption.ScaleType of
       stnResult:RadioGroup_NodeScaleType.ItemIndex:=1;
       else RadioGroup_NodeScaleType.ItemIndex:=0;
@@ -1925,6 +2036,7 @@ begin
       else RadioGroup_EdgeLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_EdgeWidth.Value:=Edge.WidthOption.scale;
+    CheckBox_EdgeScaleLog.Checked:=Edge.WidthOption.Logarithm;
     case Edge.WidthOption.ScaleType of
       steWeight:RadioGroup_EdgeScaleType.ItemIndex:=1;
       steFrequency:RadioGroup_EdgeScaleType.ItemIndex:=2;
@@ -1940,6 +2052,7 @@ begin
       else RadioGroup_ActorLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_ActorSize.Value:=Actor.SizeOption.scale;
+    CheckBox_ActorScaleLog.Checked:=Actor.SizeOption.Logarithm;
     case Actor.SizeOption.ScaleType of
       staNone:RadioGroup_ActorScaleType.ItemIndex:=0;
       else RadioGroup_ActorScaleType.ItemIndex:=0;
@@ -1955,6 +2068,7 @@ begin
       else RadioGroup_ODLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_ODWidth.Value:=OD.WidthOption.scale;
+    CheckBox_ODScaleLog.Checked:=OD.WidthOption.Logarithm;
     case OD.WidthOption.ScaleType of
       stoDist:RadioGroup_ODScaleType.ItemIndex:=1;
       else RadioGroup_ODScaleType.ItemIndex:=0;

@@ -48,6 +48,7 @@ type
       SizeOption:record
         Scale:double;
         ScaleType:TScaleTypeNode;
+        Logarithm:boolean;
       end;
       ColorOption:record
         Color:TColor;
@@ -65,6 +66,7 @@ type
       WidthOption:record
         Scale:double;
         ScaleType:TScaleTypeEdge;
+        Logarithm:boolean;
       end;
       ColorOption:record
         Color:TColor;
@@ -81,6 +83,7 @@ type
       SizeOption:record
         Scale:double;
         ScaleType:TScaleTypeActor;
+        Logarithm:boolean;
       end;
       ColorOption:record
         Color:TColor;
@@ -98,6 +101,7 @@ type
       WidthOption:record
         Scale:double;
         ScaleType:TScaleTypeOD;
+        Logarithm:boolean;
       end;
       ColorOption:record
         Color:TColor;
@@ -1046,6 +1050,7 @@ begin
                 n2:=NodeHash(x2,y2);
                 node1:=FindNodeByName(n1);
                 node2:=FindNodeByName(n2);
+                if (node1=node2) and (node1<>nil) then continue;
                 if node1=nil then begin
                   node1:=Self.AddNode(n1);
                   with node1 do begin
@@ -1157,7 +1162,7 @@ end;
 
 procedure TTC2_Network.LoadActorsFromGeoJson(filename:string);
 var str:TMemoryStream;
-    jData,features,point:TJSONData;
+    jData,features,point,coord:TJSONData;
     pi:integer;
     x,y:double;
     n:string;
@@ -1178,8 +1183,14 @@ begin
     for pi:=0 to features.Count-1 do
       begin
         point:=features.Items[pi].FindPath('geometry');
-        x:=point.FindPath('x').AsFloat;
-        y:=-point.FindPath('y').AsFloat;
+        coord:=point.FindPath('coordinates');
+        if coord<>nil then begin
+          x:=coord.Items[0].AsFloat;
+          y:=-coord.Items[1].AsFloat;
+        end else begin
+          x:=point.FindPath('x').AsFloat;
+          y:=-point.FindPath('y').AsFloat;
+        end;
         n:=ActorHash(x,y);
         actor:=FindActorByName(n);
         if actor=nil then begin
@@ -1266,11 +1277,11 @@ begin
   SG.Clear;
   SG.ColCount:=6;
   SG.Cells[0,0]:='ID';
-  SG.Cells[1,0]:='Name';
-  SG.Cells[2,0]:='group';
-  SG.Cells[3,0]:='result';
-  SG.Cells[4,0]:='geo_x';
-  SG.Cells[5,0]:='geo_y';
+  SG.Cells[1,0]:='节点名称';
+  SG.Cells[2,0]:='节点分组';
+  SG.Cells[3,0]:='最新分析结果';
+  SG.Cells[4,0]:='坐标X';
+  SG.Cells[5,0]:='坐标Y';
   SG.RowCount:=netw.NodeCount+1;
   for pi:=0 to netw.NodeCount-1 do with netw.Nodes[pi] do
     begin
@@ -1292,8 +1303,8 @@ begin
   SG.ColCount:=5;
   SG.Cells[0,0]:='ID';
   SG.Cells[1,0]:='权重';
-  SG.Cells[2,0]:='node_1';
-  SG.Cells[3,0]:='node_2';
+  SG.Cells[2,0]:='节点1';
+  SG.Cells[3,0]:='节点2';
   SG.Cells[4,0]:='流量';
   SG.RowCount:=netw.EdgeCount+1;
   for pi:=0 to netw.EdgeCount-1 do with netw.Edges[pi] do
@@ -1312,13 +1323,15 @@ var pi:integer;
 begin
   SG.BeginUpdate;
   SG.Clear;
-  SG.ColCount:=6;
+  SG.ColCount:=8;
   SG.Cells[0,0]:='ID';
-  SG.Cells[1,0]:='Name';
-  SG.Cells[2,0]:='Edge';
-  SG.Cells[3,0]:='dist';
-  SG.Cells[4,0]:='n_dist_1';
-  SG.Cells[5,0]:='n_dist_2';
+  SG.Cells[1,0]:='行动者名称';
+  SG.Cells[2,0]:='最近边线';
+  SG.Cells[3,0]:='路程距离';
+  SG.Cells[4,0]:='端点距离1';
+  SG.Cells[5,0]:='端点距离2';
+  SG.Cells[6,0]:='坐标X';
+  SG.Cells[7,0]:='坐标Y';
   SG.RowCount:=netw.ActorCount+1;
   for pi:=0 to netw.ActorCount-1 do with netw.Actors[pi] do
     begin
@@ -1328,6 +1341,8 @@ begin
       SG.Cells[3,pi+1]:=FloatToStrF(distance,ffFixed,4,6);
       SG.Cells[4,pi+1]:=FloatToStrF(node_distance[0],ffFixed,4,6);
       SG.Cells[5,pi+1]:=FloatToStrF(node_distance[1],ffFixed,4,6);
+      SG.Cells[6,pi+1]:=FloatToStrF(pos.x,ffFixed,4,6);
+      SG.Cells[7,pi+1]:=FloatToStrF(pos.y,ffFixed,4,6);
     end;
   SG.EndUpdate(true);
 end;
@@ -1339,9 +1354,9 @@ begin
   SG.Clear;
   SG.ColCount:=5;
   SG.Cells[0,0]:='ID';
-  SG.Cells[1,0]:='actor_1';
-  SG.Cells[2,0]:='actor_2';
-  SG.Cells[3,0]:='dist';
+  SG.Cells[1,0]:='起点';
+  SG.Cells[2,0]:='讫点';
+  SG.Cells[3,0]:='距离';
   SG.Cells[4,0]:='FID';
   SG.RowCount:=netw.ODCount+1;
   for pi:=0 to netw.ODCount-1 do with netw.ODs[pi] do
@@ -1359,10 +1374,12 @@ end;
 
 
 procedure one_step(node:TTC2_Node);
-var tmpPTR,tmpE2:Pointer;
+var tmpPTR:Pointer;
     tmpEdge:TTC2_Edge;
     dist:double;
 begin
+  //s
+
   for tmpPTR in node.EdgesOut do
     begin
       tmpEdge:=TTC2_Edge(tmpPTR);
@@ -1389,6 +1406,7 @@ begin
     end;
 end;
 
+//这里对于环形边线时会导致卡死
 procedure TTC2_Network.GetDistance(node:TTC2_Node);
 var tmpP,tmpE:Pointer;
 begin
@@ -1792,6 +1810,7 @@ begin
 
 end;
 
+//这里对于环形边线时会导致卡死
 procedure TTC2_Network.ODFrequency(Sender:TObject);//太慢了//好些了？
 var arr:pdouble;
     e,pos,max:integer;
@@ -1800,9 +1819,6 @@ begin
   arr:=GetMem(EdgeCount*8);
   for e:=0 to EdgeCount-1 do arr[e]:=0;
   try
-
-    //for a1:=0 to ActorCount-1 do
-      //for a2:=a1+1 to ActorCount-1 do
     for tmpOD in FActorOD do
       begin
         with TTC2_ActorOD(tmpOD) do distance:=ODTest(actors[0],actors[1]);
@@ -1830,7 +1846,9 @@ var pi,pj:integer;
     function get_dist(actor_x,actor_y,n1_x,n1_y,n2_x,n2_y:double):double;
     var len,d1,d2,p,s:double;
     begin
+      result:=NA;
       len:=sqrt(sqr(n1_x-n2_x)+sqr(n1_y-n2_y));
+      if len=0 then exit;
       d1:=sqrt(sqr(n1_x-actor_x)+sqr(n1_y-actor_y));
       d2:=sqrt(sqr(n2_x-actor_x)+sqr(n2_y-actor_y));
       p:=(len+d1+d2)/2;
@@ -1869,6 +1887,7 @@ begin
             edge.nodes[1].latlong.x,
             edge.nodes[1].latlong.y
           );
+          if is_na(dtmp) then continue;
           if dtmp<actor.distance then begin
             actor.distance:=dtmp;
             actor.node_distance[0]:=get_dist_result[0];

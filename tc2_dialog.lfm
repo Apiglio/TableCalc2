@@ -3,10 +3,12 @@ object Dialog_TC2: TDialog_TC2
   Height = 274
   Top = 459
   Width = 628
+  AllowDropFiles = True
   Caption = 'Dialog_TC2'
   ClientHeight = 274
   ClientWidth = 628
   DesignTimePPI = 144
+  OnDropFiles = FormDropFiles
   Position = poMainFormCenter
   LCLVersion = '1.8.4.0'
   object Edit1: TEdit

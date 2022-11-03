@@ -20,6 +20,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     procedure Button_OKClick(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
   protected
     function GetValue(index:integer):string;
   public
@@ -37,6 +38,13 @@ implementation
 procedure TDialog_TC2.Button_OKClick(Sender: TObject);
 begin
 
+end;
+
+procedure TDialog_TC2.FormDropFiles(Sender: TObject;
+  const FileNames: array of String);
+begin
+  if Length(FileNames)<>1 then exit;
+  Edit1.Caption:=FileNames[0];
 end;
 
 function TDialog_TC2.GetValue(index:integer):string;
