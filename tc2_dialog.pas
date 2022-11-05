@@ -24,7 +24,7 @@ type
   protected
     function GetValue(index:integer):string;
   public
-    procedure Call(title:string;labels:array of string;default_values:array of string);
+    function Call(title:string;labels:array of string;default_values:array of string):Integer;
     property Values[index:integer]:string read GetValue;
   end;
 
@@ -57,7 +57,7 @@ begin
   end;
 end;
 
-procedure TDialog_TC2.Call(title:string;labels:array of string;default_values:array of string);
+function TDialog_TC2.Call(title:string;labels:array of string;default_values:array of string):Integer;
 var ll,ld:integer;
 begin
   ll:=length(labels);
@@ -88,7 +88,7 @@ begin
 
 
   Caption:=title;
-  ShowModal;
+  result:=ShowModal;
 end;
 
 end.

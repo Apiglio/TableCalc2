@@ -1301,10 +1301,6 @@ object Form_Main: TForm_Main
           OnClick = MenuItem_Network_OD_randomClick
         end
       end
-      object MenuItem_Network_ActorEdgeUpdate: TMenuItem
-        Caption = '连接行动者与边线'
-        OnClick = MenuItem_Network_ActorEdgeUpdateClick
-      end
       object MenuItem_Network_div02: TMenuItem
         Caption = '-'
       end
@@ -1392,6 +1388,13 @@ object Form_Main: TForm_Main
       object MenuItem_Layout_Geo: TMenuItem
         Caption = '地理布局'
         OnClick = MenuItem_Layout_GeoClick
+      end
+      object MenuItem_Layout_div01: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem_Layout_Paint: TMenuItem
+        Caption = '刷新画面'
+        OnClick = MenuItem_Layout_PaintClick
       end
     end
   end

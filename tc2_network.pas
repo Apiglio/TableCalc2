@@ -20,6 +20,9 @@ type
 
   ConnectedError=class(Exception);
 
+  TValueRange = record
+    max,min:double;
+  end;
 
   TLabelTypeNode = (ltnNone, ltnID, ltnName, ltnGroup, ltnResult);
   TLabelTypeEdge = (lteNone, lteID, lteWeight, lteFrequency);
@@ -295,6 +298,10 @@ type
     procedure ActorsToStringGrid(SG:TStringGrid);
     procedure ODsToStringGrid(SG:TStringGrid);
 
+  public
+    function GetNodeResultRange:TValueRange;
+    function GetEdgeWeightRange:TValueRange;
+    function GetEdgeFrequencyRange:TValueRange;
 
   private
     //此部分运行结果有额外信息储存在Node中
@@ -1368,6 +1375,55 @@ begin
       SG.Cells[4,pi+1]:=IntToStr(fid);
     end;
   SG.EndUpdate(true);
+end;
+
+function TTC2_Network.GetNodeResultRange:TValueRange;
+var pi:integer;
+    node:TTC2_Node;
+    dtmp:double;
+begin
+  result.max:=MIN_DOUBLE;
+  result.min:=MAX_DOUBLE;
+  for pi:=0 to FNodeList.Count-1 do begin
+    node:=TTC2_Node(FNodeList.Items[pi]);
+    dtmp:=node.CalcResult;
+    if not is_na(dtmp) then begin
+      if dtmp>result.max then result.max:=dtmp;
+      if dtmp<result.min then result.min:=dtmp;
+    end;
+  end;
+end;
+function TTC2_Network.GetEdgeWeightRange:TValueRange;
+var pi:integer;
+    edge:TTC2_Edge;
+    dtmp:double;
+begin
+  result.max:=MIN_DOUBLE;
+  result.min:=MAX_DOUBLE;
+  for pi:=0 to FEdgeList.Count-1 do begin
+    edge:=TTC2_Edge(FEdgeList.Items[pi]);
+    dtmp:=edge.weight;
+    if not is_na(dtmp) then begin
+      if dtmp>result.max then result.max:=dtmp;
+      if dtmp<result.min then result.min:=dtmp;
+    end;
+  end;
+end;
+function TTC2_Network.GetEdgeFrequencyRange:TValueRange;
+var pi:integer;
+    edge:TTC2_Edge;
+    dtmp:double;
+begin
+  result.max:=MIN_DOUBLE;
+  result.min:=MAX_DOUBLE;
+  for pi:=0 to FEdgeList.Count-1 do begin
+    edge:=TTC2_Edge(FEdgeList.Items[pi]);
+    dtmp:=edge.frequent;
+    if not is_na(dtmp) then begin
+      if dtmp>result.max then result.max:=dtmp;
+      if dtmp<result.min then result.min:=dtmp;
+    end;
+  end;
 end;
 
 
