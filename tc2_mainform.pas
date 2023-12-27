@@ -16,11 +16,11 @@ type
   { TForm_Main }
 
   TForm_Main = class(TForm)
-    Button_ActorDetailedOption: TButton;
-    Button_ODDetailedOption: TButton;
-    Button_NodeDetailedOption: TButton;
+    Button_ActorDetailedOption: TToggleBox;
+    Button_EdgeDetailedOption: TToggleBox;
+    Button_NodeDetailedOption: TToggleBox;
     Button_Export_SG: TButton;
-    Button_EdgeDetailedOption: TButton;
+    Button_ODDetailedOption: TToggleBox;
     CheckBox_NodeScaleLog: TCheckBox;
     CheckBox_EdgeScaleLog: TCheckBox;
     CheckBox_ActorScaleLog: TCheckBox;
@@ -156,6 +156,7 @@ type
     procedure FloatSpinEdit_ODWidthEditingDone(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure Frame_AufScript1Click(Sender: TObject);
     procedure Frame_AufScript1Resize(Sender: TObject);
     procedure MenuItem_Layout_PaintClick(Sender: TObject);
     procedure MenuItem_Network_Actor_ImportGeoJSONClick(Sender: TObject);
@@ -1222,6 +1223,11 @@ begin
 
 end;
 
+procedure TForm_Main.Frame_AufScript1Click(Sender: TObject);
+begin
+
+end;
+
 procedure TForm_Main.Frame_AufScript1Resize(Sender: TObject);
 begin
   Frame_AufScript1.FrameResize(Frame_AufScript1);
@@ -1973,26 +1979,26 @@ end;
 
 procedure TForm_Main.Button_EdgeDetailedOptionClick(Sender: TObject);
 begin
-  if ScrollBox_EdgeOption.Height>0 then ScrollBox_EdgeOption.Height:=0
-  else ScrollBox_EdgeOption.Height:=400;
+  if (Sender as TToggleBox).Checked then ScrollBox_EdgeOption.Height:=400
+  else ScrollBox_EdgeOption.Height:=0;
 end;
 
 procedure TForm_Main.Button_ActorDetailedOptionClick(Sender: TObject);
 begin
-  if ScrollBox_ActorOption.Height>0 then ScrollBox_ActorOption.Height:=0
-  else ScrollBox_ActorOption.Height:=300;
+  if (Sender as TToggleBox).Checked then ScrollBox_ActorOption.Height:=300
+  else ScrollBox_ActorOption.Height:=0
 end;
 
 procedure TForm_Main.Button_NodeDetailedOptionClick(Sender: TObject);
 begin
-  if ScrollBox_NodeOption.Height>0 then ScrollBox_NodeOption.Height:=0
-  else ScrollBox_NodeOption.Height:=380;
+  if (Sender as TToggleBox).Checked then ScrollBox_NodeOption.Height:=380
+  else ScrollBox_NodeOption.Height:=0;
 end;
 
 procedure TForm_Main.Button_ODDetailedOptionClick(Sender: TObject);
 begin
-  if ScrollBox_ODOption.Height>0 then ScrollBox_ODOption.Height:=0
-  else ScrollBox_ODOption.Height:=340;
+  if (Sender as TToggleBox).Checked then ScrollBox_ODOption.Height:=340
+  else ScrollBox_ODOption.Height:=0;
 end;
 
 procedure TForm_Main.Button_runClick(Sender: TObject);

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="Table_Calc_2"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -18,9 +20,10 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
@@ -46,35 +49,35 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\..\FPC_Unit\Auf\apiglio_useful.pas"/>
+        <Filename Value="tc2_network.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Apiglio_Useful"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\..\FPC_Unit\Auf\auf_ram_var.pas"/>
+        <Filename Value="tc2_geojson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\..\FPC_Unit\Auf\aufscript_frame.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Frame_AufScript"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="tc2_network.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="tc2_geojson.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
         <Filename Value="tc2_dialog.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Dialog_TC2"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\AufScript\aufscript_frame.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Frame_AufScript"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\AufScript\apiglio_useful.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Apiglio_Useful"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\AufScript\auf_ram_var.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit7>
     </Units>
   </ProjectOptions>
@@ -86,7 +89,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\FPC_Unit\Auf"/>
+      <OtherUnitFiles Value="..\AufScript"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

@@ -1,18 +1,18 @@
 object Form_Main: TForm_Main
-  Left = 863
-  Height = 679
-  Top = 347
-  Width = 1114
+  Left = 363
+  Height = 566
+  Top = 284
+  Width = 1074
   AlphaBlend = True
   Caption = 'TableCalc2'
-  ClientHeight = 649
-  ClientWidth = 1114
-  DesignTimePPI = 144
+  ClientHeight = 531
+  ClientWidth = 1074
+  DesignTimePPI = 120
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.2.6.0'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -20,18 +20,18 @@ object Form_Main: TForm_Main
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 649
+    Height = 531
     Top = 0
-    Width = 360
+    Width = 315
     ActivePage = TabSheet_Layout
     Anchors = [akTop, akLeft, akRight, akBottom]
-    Constraints.MinWidth = 300
+    Constraints.MinWidth = 250
     TabIndex = 1
     TabOrder = 0
     object TabSheet_AufScript: TTabSheet
       Caption = 'AufScript'
-      ClientHeight = 564
-      ClientWidth = 352
+      ClientHeight = 490
+      ClientWidth = 305
       inline Frame_AufScript1: TFrame_AufScript
         AnchorSideLeft.Control = TabSheet_AufScript
         AnchorSideTop.Control = TabSheet_AufScript
@@ -39,105 +39,83 @@ object Form_Main: TForm_Main
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet_AufScript
         AnchorSideBottom.Side = asrBottom
-        Height = 564
-        Width = 352
+        Height = 490
+        Width = 305
         Anchors = [akTop, akLeft, akRight, akBottom]
-        ClientHeight = 564
-        ClientWidth = 352
+        ClientHeight = 490
+        ClientWidth = 305
+        OnClick = Frame_AufScript1Click
         OnResize = Frame_AufScript1Resize
+        DesignLeft = 988
+        DesignTop = 463
         inherited ProgressBar: TProgressBar
           AnchorSideLeft.Control = Frame_AufScript1
           AnchorSideRight.Control = Frame_AufScript1
           AnchorSideBottom.Control = Frame_AufScript1
-          Left = 6
-          Height = 12
-          Top = 546
-          Width = 340
-          BorderSpacing.Left = 6
-          BorderSpacing.Right = 6
-          BorderSpacing.Bottom = 6
+          Top = 479
+          Width = 299
         end
         inherited Memo_out: TMemo
+          AnchorSideTop.Control = Frame_AufScript1
           AnchorSideRight.Control = Frame_AufScript1
-          Left = 80
-          Height = 458
-          Top = 42
-          Width = 266
-          BorderSpacing.Top = 6
-          BorderSpacing.Right = 6
-          BorderSpacing.Bottom = 6
+          Left = 148
+          Height = 442
+          Width = 154
         end
         inherited Button_run: TButton
-          Left = 80
-          Height = 34
-          Top = 506
-          Width = 85
-          BorderSpacing.Bottom = 6
+          Left = 148
+          Height = 28
+          Top = 448
+          Width = 71
           OnClick = Button_runClick
         end
         inherited Button_pause: TButton
-          Left = 171
-          Height = 34
-          Top = 506
-          Width = 85
-          BorderSpacing.Bottom = 6
+          Left = 190
+          Height = 28
+          Top = 448
+          Width = 71
         end
         inherited Button_stop: TButton
-          Left = 261
-          Height = 34
-          Top = 506
-          Width = 85
-          BorderSpacing.Bottom = 6
+          Left = 231
+          Height = 28
+          Top = 448
+          Width = 71
         end
         inherited Button_ScriptLoad: TButton
-          Left = 6
-          Height = 34
-          Top = 506
-          Width = 85
-          BorderSpacing.Bottom = 6
+          Height = 28
+          Top = 448
+          Width = 71
         end
         inherited Button_ScriptSave: TButton
-          Left = 135
-          Height = 34
-          Top = 506
-          Width = 85
-          BorderSpacing.Bottom = 6
+          Left = 72
+          Height = 28
+          Top = 448
+          Width = 71
         end
         inherited Memo_cmd: TSynEdit
           AnchorSideLeft.Control = Frame_AufScript1
-          Left = 6
-          Height = 458
-          Top = 42
-          Width = 214
-          BorderSpacing.Left = 6
-          BorderSpacing.Top = 6
-          BorderSpacing.Bottom = 6
-          Gutter.Width = 61
+          AnchorSideTop.Control = Frame_AufScript1
+          Height = 442
+          Width = 140
+          Gutter.Width = 65
           inherited SynLeftGutterPartList1: TSynGutterPartList
             inherited SynGutterCodeFolding1: TSynGutterCodeFolding
               AutoSize = False
-              Width = 12
+              Width = 10
             end
           end
         end
-        inherited TrackBar: TTrackBar
-          AnchorSideLeft.Control = Frame_AufScript1
+        inherited Splitter_Vert: TSplitter
           AnchorSideTop.Control = Frame_AufScript1
-          AnchorSideRight.Control = Frame_AufScript1
-          Left = 6
-          Height = 30
-          Top = 6
-          Width = 340
-          BorderSpacing.Left = 6
-          BorderSpacing.Top = 6
-          BorderSpacing.Right = 6
+          Left = 143
+          Height = 445
         end
       end
     end
     object TabSheet_Layout: TTabSheet
       Caption = '显示设置'
-      ClientHeight = 612
-      ClientWidth = 352
+      ClientHeight = 490
+      ClientWidth = 305
       object ScrollBox_PaintOption: TScrollBox
         AnchorSideLeft.Control = TabSheet_Layout
         AnchorSideTop.Control = TabSheet_Layout
@@ -146,24 +124,24 @@ object Form_Main: TForm_Main
         AnchorSideBottom.Control = TabSheet_Layout
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 612
+        Height = 490
         Top = 0
-        Width = 352
-        HorzScrollBar.Page = 270
-        VertScrollBar.Page = 608
+        Width = 305
+        HorzScrollBar.Page = 267
+        VertScrollBar.Page = 488
         Anchors = [akTop, akLeft, akRight, akBottom]
-        ClientHeight = 608
-        ClientWidth = 322
+        ClientHeight = 488
+        ClientWidth = 290
         TabOrder = 0
         object CheckBox_ShowNodes: TCheckBox
           AnchorSideLeft.Control = ScrollBox_PaintOption
           AnchorSideTop.Control = ScrollBox_PaintOption
-          Left = 16
-          Height = 28
-          Top = 16
-          Width = 100
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 16
+          Left = 13
+          Height = 31
+          Top = 13
+          Width = 98
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 13
           Caption = '显示节点'
           Checked = True
           OnClick = CheckBox_ShowNodesClick
@@ -176,18 +154,18 @@ object Form_Main: TForm_Main
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ScrollBox_PaintOption
           AnchorSideRight.Side = asrBottom
-          Left = 16
-          Height = 374
-          Top = 52
-          Width = 290
-          HorzScrollBar.Page = 234
-          VertScrollBar.Page = 370
+          Left = 13
+          Height = 312
+          Top = 51
+          Width = 264
+          HorzScrollBar.Page = 239
+          VertScrollBar.Page = 310
           Anchors = [akTop, akLeft, akRight]
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 16
-          ClientHeight = 370
-          ClientWidth = 286
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 7
+          BorderSpacing.Right = 13
+          ClientHeight = 310
+          ClientWidth = 249
           TabOrder = 1
           object RadioGroup_NodeLabelType: TRadioGroup
             AnchorSideLeft.Control = ScrollBox_NodeOption
@@ -195,15 +173,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_NodeOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 176
-            Top = 48
-            Width = 266
+            Left = 8
+            Height = 147
+            Top = 47
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '节点标注'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -212,8 +190,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 147
-            ClientWidth = 262
+            ClientHeight = 119
+            ClientWidth = 231
             ItemIndex = 0
             Items.Strings = (
               '无'
@@ -229,11 +207,11 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = RadioGroup_NodeLabelType
             AnchorSideTop.Control = FloatSpinEdit_NodeSize
             AnchorSideTop.Side = asrCenter
-            Left = 10
-            Height = 24
-            Top = 342
+            Left = 8
+            Height = 27
+            Top = 294
             Width = 90
-            BorderSpacing.Top = 10
+            BorderSpacing.Top = 8
             Caption = '大小系数：'
             ParentColor = False
           end
@@ -243,17 +221,14 @@ object Form_Main: TForm_Main
             AnchorSideTop.Control = RadioGroup_NodeScaleType
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = CheckBox_NodeScaleLog
-            Left = 100
-            Height = 32
-            Top = 338
-            Width = 102
+            Left = 98
+            Height = 39
+            Top = 288
+            Width = 73
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             DecimalPlaces = 6
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
             OnEditingDone = FloatSpinEdit_NodeSizeEditingDone
             TabOrder = 1
             Value = 0.5
@@ -261,11 +236,11 @@ object Form_Main: TForm_Main
           object CheckBox_ShowNodeLabel: TCheckBox
             AnchorSideLeft.Control = RadioGroup_NodeLabelType
             AnchorSideTop.Control = ScrollBox_NodeOption
-            Left = 10
-            Height = 28
-            Top = 10
-            Width = 100
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 8
+            Width = 98
+            BorderSpacing.Top = 8
             Caption = '显示标注'
             OnClick = CheckBox_ShowNodeLabelClick
             TabOrder = 2
@@ -276,15 +251,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_NodeOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 94
-            Top = 234
-            Width = 266
+            Left = 8
+            Height = 78
+            Top = 202
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '尺寸赋值'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -293,8 +268,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 65
-            ClientWidth = 262
+            ClientHeight = 50
+            ClientWidth = 231
             Items.Strings = (
               '无'
               '最新计算结果'
@@ -307,12 +282,12 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrCenter
             AnchorSideRight.Control = ScrollBox_NodeOption
             AnchorSideRight.Side = asrBottom
-            Left = 212
-            Height = 28
-            Top = 340
-            Width = 64
+            Left = 179
+            Height = 31
+            Top = 292
+            Width = 62
             Anchors = [akTop, akRight]
-            BorderSpacing.Right = 10
+            BorderSpacing.Right = 8
             Caption = '对数'
             OnClick = CheckBox_NodeScaleLogClick
             TabOrder = 4
@@ -322,12 +297,12 @@ object Form_Main: TForm_Main
           AnchorSideLeft.Control = ScrollBox_PaintOption
           AnchorSideTop.Control = ScrollBox_NodeOption
           AnchorSideTop.Side = asrBottom
-          Left = 16
-          Height = 28
-          Top = 442
-          Width = 100
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 16
+          Left = 13
+          Height = 31
+          Top = 376
+          Width = 98
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 13
           Caption = '显示边线'
           Checked = True
           OnClick = CheckBox_ShowEdgesClick
@@ -341,18 +316,18 @@ object Form_Main: TForm_Main
           AnchorSideRight.Control = ScrollBox_PaintOption
           AnchorSideRight.Side = asrBottom
           AnchorSideBottom.Side = asrBottom
-          Left = 16
-          Height = 400
-          Top = 478
-          Width = 290
-          HorzScrollBar.Page = 234
-          VertScrollBar.Page = 396
+          Left = 13
+          Height = 333
+          Top = 414
+          Width = 264
+          HorzScrollBar.Page = 239
+          VertScrollBar.Page = 331
           Anchors = [akTop, akLeft, akRight]
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 16
-          ClientHeight = 396
-          ClientWidth = 286
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 7
+          BorderSpacing.Right = 13
+          ClientHeight = 331
+          ClientWidth = 249
           TabOrder = 3
           object RadioGroup_EdgeLabelType: TRadioGroup
             AnchorSideLeft.Control = ScrollBox_EdgeOption
@@ -360,15 +335,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_EdgeOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 142
+            Left = 8
+            Height = 118
             Top = 86
-            Width = 266
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '连接标注'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -377,8 +352,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 113
-            ClientWidth = 262
+            ClientHeight = 90
+            ClientWidth = 231
             ItemIndex = 0
             Items.Strings = (
               '无'
@@ -393,12 +368,12 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = ScrollBox_EdgeOption
             AnchorSideTop.Control = CheckBox_ShowEdgeLabel
             AnchorSideTop.Side = asrBottom
-            Left = 10
-            Height = 28
-            Top = 48
-            Width = 100
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 47
+            Width = 98
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
             Caption = '显示箭头'
             OnClick = CheckBox_ShowEdgeArrowClick
             TabOrder = 1
@@ -409,17 +384,14 @@ object Form_Main: TForm_Main
             AnchorSideTop.Control = RadioGroup_EdgeScaleType
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = CheckBox_EdgeScaleLog
-            Left = 100
-            Height = 32
-            Top = 364
-            Width = 102
+            Left = 98
+            Height = 39
+            Top = 317
+            Width = 73
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             DecimalPlaces = 6
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
             OnEditingDone = FloatSpinEdit_EdgeWidthEditingDone
             TabOrder = 2
             Value = 0.5
@@ -428,23 +400,23 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = ScrollBox_EdgeOption
             AnchorSideTop.Control = FloatSpinEdit_EdgeWidth
             AnchorSideTop.Side = asrCenter
-            Left = 10
-            Height = 24
-            Top = 368
+            Left = 8
+            Height = 27
+            Top = 323
             Width = 90
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 8
             Caption = '宽度系数：'
             ParentColor = False
           end
           object CheckBox_ShowEdgeLabel: TCheckBox
             AnchorSideLeft.Control = ScrollBox_EdgeOption
             AnchorSideTop.Control = ScrollBox_EdgeOption
-            Left = 10
-            Height = 28
-            Top = 10
-            Width = 100
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 8
+            Width = 98
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
             Caption = '显示标注'
             OnClick = CheckBox_ShowEdgeLabelClick
             TabOrder = 3
@@ -455,15 +427,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_EdgeOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 116
-            Top = 238
-            Width = 266
+            Left = 8
+            Height = 97
+            Top = 212
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '线宽赋值'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -472,8 +444,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 87
-            ClientWidth = 262
+            ClientHeight = 69
+            ClientWidth = 231
             Items.Strings = (
               '无'
               '权重'
@@ -487,12 +459,12 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrCenter
             AnchorSideRight.Control = ScrollBox_EdgeOption
             AnchorSideRight.Side = asrBottom
-            Left = 212
-            Height = 28
-            Top = 366
-            Width = 64
+            Left = 179
+            Height = 31
+            Top = 321
+            Width = 62
             Anchors = [akTop, akRight]
-            BorderSpacing.Right = 10
+            BorderSpacing.Right = 8
             Caption = '对数'
             OnClick = CheckBox_EdgeScaleLogClick
             TabOrder = 5
@@ -502,12 +474,12 @@ object Form_Main: TForm_Main
           AnchorSideLeft.Control = ScrollBox_PaintOption
           AnchorSideTop.Control = ScrollBox_EdgeOption
           AnchorSideTop.Side = asrBottom
-          Left = 16
-          Height = 28
-          Top = 894
-          Width = 118
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 16
+          Left = 13
+          Height = 31
+          Top = 760
+          Width = 116
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 13
           Caption = '显示行动者'
           OnClick = CheckBox_ShowActorsClick
           TabOrder = 4
@@ -518,28 +490,28 @@ object Form_Main: TForm_Main
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ScrollBox_PaintOption
           AnchorSideRight.Side = asrBottom
-          Left = 16
-          Height = 316
-          Top = 930
-          Width = 290
-          HorzScrollBar.Page = 234
-          VertScrollBar.Page = 296
+          Left = 13
+          Height = 263
+          Top = 798
+          Width = 264
+          HorzScrollBar.Page = 239
+          VertScrollBar.Page = 261
           Anchors = [akTop, akLeft, akRight]
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 16
-          ClientHeight = 312
-          ClientWidth = 286
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 7
+          BorderSpacing.Right = 13
+          ClientHeight = 261
+          ClientWidth = 249
           TabOrder = 5
           object CheckBox_ShowActorLabel: TCheckBox
             AnchorSideLeft.Control = ScrollBox_ActorOption
             AnchorSideTop.Control = ScrollBox_ActorOption
-            Left = 10
-            Height = 28
-            Top = 10
-            Width = 100
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 8
+            Width = 98
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
             Caption = '显示标注'
             OnClick = CheckBox_ShowActorLabelClick
             TabOrder = 0
@@ -550,15 +522,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_ActorOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 126
-            Top = 48
-            Width = 266
+            Left = 8
+            Height = 105
+            Top = 47
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '行动者标注'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -567,8 +539,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 97
-            ClientWidth = 262
+            ClientHeight = 77
+            ClientWidth = 231
             Items.Strings = (
               '无'
               '行动者编号'
@@ -583,15 +555,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_ActorOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 70
-            Top = 184
-            Width = 266
+            Left = 8
+            Height = 58
+            Top = 160
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '尺寸赋值'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -600,8 +572,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 41
-            ClientWidth = 262
+            ClientHeight = 30
+            ClientWidth = 231
             Items.Strings = (
               '无'
             )
@@ -614,16 +586,13 @@ object Form_Main: TForm_Main
             AnchorSideTop.Control = RadioGroup_ActorScaleType
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = CheckBox_ActorScaleLog
-            Left = 100
-            Height = 32
-            Top = 264
-            Width = 102
+            Left = 98
+            Height = 39
+            Top = 226
+            Width = 73
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             OnEditingDone = FloatSpinEdit_ActorSizeEditingDone
             TabOrder = 3
             Value = 0.5
@@ -632,11 +601,11 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = RadioGroup_ActorScaleType
             AnchorSideTop.Control = FloatSpinEdit_ActorSize
             AnchorSideTop.Side = asrCenter
-            Left = 10
-            Height = 24
-            Top = 268
+            Left = 8
+            Height = 27
+            Top = 232
             Width = 90
-            BorderSpacing.Top = 10
+            BorderSpacing.Top = 8
             Caption = '大小系数：'
             ParentColor = False
           end
@@ -645,12 +614,12 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrCenter
             AnchorSideRight.Control = ScrollBox_ActorOption
             AnchorSideRight.Side = asrBottom
-            Left = 212
-            Height = 28
-            Top = 266
-            Width = 64
+            Left = 179
+            Height = 31
+            Top = 230
+            Width = 62
             Anchors = [akTop, akRight]
-            BorderSpacing.Right = 10
+            BorderSpacing.Right = 8
             Caption = '对数'
             OnClick = CheckBox_ActorScaleLogClick
             TabOrder = 4
@@ -660,12 +629,12 @@ object Form_Main: TForm_Main
           AnchorSideLeft.Control = ScrollBox_PaintOption
           AnchorSideTop.Control = ScrollBox_ActorOption
           AnchorSideTop.Side = asrBottom
-          Left = 16
-          Height = 28
-          Top = 1262
-          Width = 93
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 16
+          Left = 13
+          Height = 31
+          Top = 1074
+          Width = 87
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 13
           Caption = '显示OD'
           OnClick = CheckBox_ShowODsClick
           TabOrder = 6
@@ -678,28 +647,28 @@ object Form_Main: TForm_Main
           AnchorSideRight.Side = asrBottom
           AnchorSideBottom.Control = ScrollBox_ActorOption
           AnchorSideBottom.Side = asrBottom
-          Left = 16
-          Height = 356
-          Top = 1298
-          Width = 290
-          HorzScrollBar.Page = 234
-          VertScrollBar.Page = 340
+          Left = 13
+          Height = 297
+          Top = 1112
+          Width = 264
+          HorzScrollBar.Page = 239
+          VertScrollBar.Page = 295
           Anchors = [akTop, akLeft, akRight]
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 16
-          ClientHeight = 352
-          ClientWidth = 286
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 7
+          BorderSpacing.Right = 13
+          ClientHeight = 295
+          ClientWidth = 249
           TabOrder = 7
           object CheckBox_ShowODLabel: TCheckBox
             AnchorSideLeft.Control = ScrollBox_ODOption
             AnchorSideTop.Control = ScrollBox_ODOption
-            Left = 10
-            Height = 28
-            Top = 10
-            Width = 100
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 8
+            Width = 98
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
             Caption = '显示标注'
             OnClick = CheckBox_ShowODLabelClick
             TabOrder = 0
@@ -708,12 +677,12 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = ScrollBox_ODOption
             AnchorSideTop.Control = CheckBox_ShowODLabel
             AnchorSideTop.Side = asrBottom
-            Left = 10
-            Height = 28
-            Top = 48
-            Width = 100
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
+            Left = 8
+            Height = 31
+            Top = 47
+            Width = 98
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
             Caption = '显示箭头'
             OnClick = CheckBox_ShowODArrowClick
             TabOrder = 1
@@ -724,15 +693,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_ODOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 118
+            Left = 8
+            Height = 98
             Top = 86
-            Width = 266
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '连接标注'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -741,8 +710,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 89
-            ClientWidth = 262
+            ClientHeight = 70
+            ClientWidth = 231
             ItemIndex = 0
             Items.Strings = (
               '无'
@@ -758,15 +727,15 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = ScrollBox_ODOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 84
-            Top = 214
-            Width = 266
+            Left = 8
+            Height = 70
+            Top = 192
+            Width = 233
             Anchors = [akTop, akLeft, akRight]
             AutoFill = True
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             Caption = '线宽赋值'
             ChildSizing.LeftRightSpacing = 6
             ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -775,8 +744,8 @@ object Form_Main: TForm_Main
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 1
-            ClientHeight = 55
-            ClientWidth = 262
+            ClientHeight = 42
+            ClientWidth = 231
             Items.Strings = (
               '无'
               '距离'
@@ -790,17 +759,14 @@ object Form_Main: TForm_Main
             AnchorSideTop.Control = RadioGroup_ODScaleType
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = CheckBox_ODScaleLog
-            Left = 100
-            Height = 32
-            Top = 308
-            Width = 102
+            Left = 98
+            Height = 39
+            Top = 270
+            Width = 73
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             DecimalPlaces = 6
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
             OnEditingDone = FloatSpinEdit_ODWidthEditingDone
             TabOrder = 4
             Value = 0.5
@@ -809,11 +775,11 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Control = ScrollBox_ODOption
             AnchorSideTop.Control = FloatSpinEdit_ODWidth
             AnchorSideTop.Side = asrCenter
-            Left = 10
-            Height = 24
-            Top = 312
+            Left = 8
+            Height = 27
+            Top = 276
             Width = 90
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 8
             Caption = '宽度系数：'
             ParentColor = False
           end
@@ -822,12 +788,12 @@ object Form_Main: TForm_Main
             AnchorSideTop.Side = asrCenter
             AnchorSideRight.Control = ScrollBox_ODOption
             AnchorSideRight.Side = asrBottom
-            Left = 212
-            Height = 28
-            Top = 310
-            Width = 64
+            Left = 179
+            Height = 31
+            Top = 274
+            Width = 62
             Anchors = [akTop, akRight]
-            BorderSpacing.Right = 10
+            BorderSpacing.Right = 8
             Caption = '对数'
             OnClick = CheckBox_ODScaleLogClick
             TabOrder = 5
@@ -839,14 +805,14 @@ object Form_Main: TForm_Main
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ScrollBox_PaintOption
           AnchorSideRight.Side = asrBottom
-          Left = 16
-          Height = 24
-          Top = 1670
+          Left = 13
+          Height = 27
+          Top = 1422
           Width = 126
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 16
-          BorderSpacing.Right = 16
-          BorderSpacing.Bottom = 5
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 13
+          BorderSpacing.Right = 13
+          BorderSpacing.Bottom = 4
           Caption = '画布显示设置：'
           ParentColor = False
         end
@@ -857,37 +823,37 @@ object Form_Main: TForm_Main
           AnchorSideRight.Control = ScrollBox_PaintOption
           AnchorSideRight.Side = asrBottom
           AnchorSideBottom.Side = asrBottom
-          Left = 16
-          Height = 162
-          Top = 1702
-          Width = 290
-          HorzScrollBar.Page = 120
-          VertScrollBar.Page = 138
+          Left = 13
+          Height = 135
+          Top = 1456
+          Width = 264
+          HorzScrollBar.Page = 141
+          VertScrollBar.Page = 133
           Anchors = [akTop, akLeft, akRight]
-          BorderSpacing.Left = 16
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 16
-          BorderSpacing.Bottom = 20
-          ClientHeight = 158
-          ClientWidth = 286
+          BorderSpacing.Left = 13
+          BorderSpacing.Top = 7
+          BorderSpacing.Right = 13
+          BorderSpacing.Bottom = 17
+          ClientHeight = 133
+          ClientWidth = 249
           TabOrder = 8
           object TrackBar_Alpha: TTrackBar
             AnchorSideLeft.Control = ScrollBox_LayoutOption
             AnchorSideTop.Control = ScrollBox_LayoutOption
             AnchorSideRight.Control = ScrollBox_LayoutOption
             AnchorSideRight.Side = asrBottom
-            Left = 10
-            Height = 22
-            Top = 10
-            Width = 266
+            Left = 8
+            Height = 48
+            Top = 8
+            Width = 233
             Max = 255
             Min = 30
             OnChange = TrackBar_AlphaChange
             Position = 255
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 10
-            BorderSpacing.Right = 10
+            BorderSpacing.Left = 8
+            BorderSpacing.Top = 8
+            BorderSpacing.Right = 8
             TabOrder = 0
           end
           object FloatSpinEditEx_Bottom: TFloatSpinEditEx
@@ -895,16 +861,12 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Side = asrCenter
             AnchorSideTop.Control = FloatSpinEditEx_Left
             AnchorSideTop.Side = asrBottom
-            Left = 103
-            Height = 32
-            Top = 106
-            Width = 80
+            Left = 91
+            Height = 39
+            Top = 142
+            Width = 67
             MaxLength = 0
             TabOrder = 1
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
             Value = 500
           end
           object FloatSpinEditEx_Right: TFloatSpinEditEx
@@ -912,16 +874,12 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Side = asrBottom
             AnchorSideTop.Control = FloatSpinEditEx_Top
             AnchorSideTop.Side = asrBottom
-            Left = 183
-            Height = 32
-            Top = 74
-            Width = 80
+            Left = 158
+            Height = 39
+            Top = 103
+            Width = 67
             MaxLength = 0
             TabOrder = 2
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
             Value = 500
           end
           object FloatSpinEditEx_Left: TFloatSpinEditEx
@@ -929,17 +887,13 @@ object Form_Main: TForm_Main
             AnchorSideTop.Control = FloatSpinEditEx_Top
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = FloatSpinEditEx_Top
-            Left = 23
-            Height = 32
-            Top = 74
-            Width = 80
+            Left = 24
+            Height = 39
+            Top = 103
+            Width = 67
             Anchors = [akTop, akRight]
             MaxLength = 0
             TabOrder = 3
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
             Value = -500
           end
           object FloatSpinEditEx_Top: TFloatSpinEditEx
@@ -947,82 +901,86 @@ object Form_Main: TForm_Main
             AnchorSideLeft.Side = asrCenter
             AnchorSideTop.Control = TrackBar_Alpha
             AnchorSideTop.Side = asrBottom
-            Left = 103
-            Height = 32
-            Top = 42
-            Width = 80
-            BorderSpacing.Top = 10
+            Left = 91
+            Height = 39
+            Top = 64
+            Width = 67
+            BorderSpacing.Top = 8
             MaxLength = 0
             TabOrder = 4
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
             Value = -500
           end
         end
-        object Button_NodeDetailedOption: TButton
+        object Button_NodeDetailedOption: TToggleBox
           AnchorSideTop.Control = CheckBox_ShowNodes
           AnchorSideTop.Side = asrCenter
           AnchorSideRight.Control = ScrollBox_LayoutOption
           AnchorSideRight.Side = asrBottom
-          Left = 224
-          Height = 24
+          Left = 209
+          Height = 20
           Top = 18
-          Width = 82
+          Width = 68
           Anchors = [akTop, akRight]
           Caption = '高级设置'
+          Checked = True
           OnClick = Button_NodeDetailedOptionClick
+          State = cbChecked
           TabOrder = 9
         end
-        object Button_EdgeDetailedOption: TButton
-          AnchorSideTop.Control = CheckBox_ShowEdges
-          AnchorSideTop.Side = asrCenter
-          AnchorSideRight.Control = ScrollBox_LayoutOption
-          AnchorSideRight.Side = asrBottom
-          Left = 224
-          Height = 24
-          Top = 444
-          Width = 82
-          Anchors = [akTop, akRight]
-          Caption = '高级设置'
-          OnClick = Button_EdgeDetailedOptionClick
-          TabOrder = 10
-        end
-        object Button_ActorDetailedOption: TButton
-          AnchorSideTop.Control = CheckBox_ShowActors
-          AnchorSideTop.Side = asrCenter
-          AnchorSideRight.Control = ScrollBox_LayoutOption
-          AnchorSideRight.Side = asrBottom
-          Left = 224
-          Height = 24
-          Top = 896
-          Width = 82
-          Anchors = [akTop, akRight]
-          Caption = '高级设置'
-          OnClick = Button_ActorDetailedOptionClick
-          TabOrder = 11
-        end
-        object Button_ODDetailedOption: TButton
+        object Button_ODDetailedOption: TToggleBox
           AnchorSideTop.Control = CheckBox_ShowODs
           AnchorSideTop.Side = asrCenter
           AnchorSideRight.Control = ScrollBox_LayoutOption
           AnchorSideRight.Side = asrBottom
-          Left = 224
-          Height = 24
-          Top = 1264
-          Width = 82
+          Left = 209
+          Height = 20
+          Top = 1079
+          Width = 68
           Anchors = [akTop, akRight]
           Caption = '高级设置'
+          Checked = True
           OnClick = Button_ODDetailedOptionClick
+          State = cbChecked
+          TabOrder = 10
+        end
+        object Button_ActorDetailedOption: TToggleBox
+          AnchorSideTop.Control = CheckBox_ShowActors
+          AnchorSideTop.Side = asrCenter
+          AnchorSideRight.Control = ScrollBox_LayoutOption
+          AnchorSideRight.Side = asrBottom
+          Left = 209
+          Height = 20
+          Top = 765
+          Width = 68
+          Anchors = [akTop, akRight]
+          Caption = '高级设置'
+          Checked = True
+          OnClick = Button_ActorDetailedOptionClick
+          State = cbChecked
+          TabOrder = 11
+        end
+        object Button_EdgeDetailedOption: TToggleBox
+          AnchorSideTop.Control = CheckBox_ShowEdges
+          AnchorSideTop.Side = asrCenter
+          AnchorSideRight.Control = ScrollBox_LayoutOption
+          AnchorSideRight.Side = asrBottom
+          Left = 209
+          Height = 20
+          Top = 381
+          Width = 68
+          Anchors = [akTop, akRight]
+          Caption = '高级设置'
+          Checked = True
+          OnClick = Button_EdgeDetailedOptionClick
+          State = cbChecked
           TabOrder = 12
         end
       end
     end
     object TabSheet_DataView: TTabSheet
       Caption = '数据视图'
-      ClientHeight = 612
-      ClientWidth = 352
+      ClientHeight = 490
+      ClientWidth = 305
       object PageControl_DataView: TPageControl
         AnchorSideLeft.Control = TabSheet_DataView
         AnchorSideTop.Control = TabSheet_DataView
@@ -1031,18 +989,18 @@ object Form_Main: TForm_Main
         AnchorSideBottom.Control = TabSheet_DataView
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 582
+        Height = 465
         Top = 0
-        Width = 352
+        Width = 305
         ActivePage = TabSheet_OD
         Anchors = [akTop, akLeft, akRight, akBottom]
-        BorderSpacing.Bottom = 30
+        BorderSpacing.Bottom = 25
         TabIndex = 3
         TabOrder = 0
         object TabSheet_DV_Node: TTabSheet
           Caption = '节点'
-          ClientHeight = 562
-          ClientWidth = 344
+          ClientHeight = 421
+          ClientWidth = 295
           object StringGrid_DV_Node: TStringGrid
             AnchorSideLeft.Control = TabSheet_DV_Node
             AnchorSideTop.Control = TabSheet_DV_Node
@@ -1051,9 +1009,9 @@ object Form_Main: TForm_Main
             AnchorSideBottom.Control = TabSheet_DV_Node
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 562
+            Height = 421
             Top = 0
-            Width = 344
+            Width = 295
             Anchors = [akTop, akLeft, akRight, akBottom]
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
             TabOrder = 0
@@ -1062,8 +1020,8 @@ object Form_Main: TForm_Main
         end
         object TabSheet_DV_Edge: TTabSheet
           Caption = '边线'
-          ClientHeight = 562
-          ClientWidth = 344
+          ClientHeight = 421
+          ClientWidth = 295
           object StringGrid_DV_Edge: TStringGrid
             AnchorSideLeft.Control = TabSheet_DV_Edge
             AnchorSideTop.Control = TabSheet_DV_Edge
@@ -1072,9 +1030,9 @@ object Form_Main: TForm_Main
             AnchorSideBottom.Control = TabSheet_DV_Edge
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 562
+            Height = 421
             Top = 0
-            Width = 344
+            Width = 295
             Anchors = [akTop, akLeft, akRight, akBottom]
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
             TabOrder = 0
@@ -1083,8 +1041,8 @@ object Form_Main: TForm_Main
         end
         object TabSheet_DV_Actor: TTabSheet
           Caption = '行动者'
-          ClientHeight = 562
-          ClientWidth = 344
+          ClientHeight = 421
+          ClientWidth = 295
           object StringGrid_DV_Actor: TStringGrid
             AnchorSideLeft.Control = TabSheet_DV_Actor
             AnchorSideTop.Control = TabSheet_DV_Actor
@@ -1093,9 +1051,9 @@ object Form_Main: TForm_Main
             AnchorSideBottom.Control = TabSheet_DV_Actor
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 562
+            Height = 421
             Top = 0
-            Width = 344
+            Width = 295
             Anchors = [akTop, akLeft, akRight, akBottom]
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
             TabOrder = 0
@@ -1104,8 +1062,8 @@ object Form_Main: TForm_Main
         end
         object TabSheet_OD: TTabSheet
           Caption = 'OD'
-          ClientHeight = 545
-          ClientWidth = 344
+          ClientHeight = 421
+          ClientWidth = 295
           object StringGrid_DV_OD: TStringGrid
             AnchorSideLeft.Control = TabSheet_OD
             AnchorSideTop.Control = TabSheet_OD
@@ -1114,20 +1072,20 @@ object Form_Main: TForm_Main
             AnchorSideBottom.Control = TabSheet_OD
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 545
+            Height = 421
             Top = 0
-            Width = 344
+            Width = 295
             Anchors = [akTop, akLeft, akRight, akBottom]
             AutoEdit = False
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
             TabOrder = 0
             OnEnter = StringGrid_DV_ODEnter
             ColWidths = (
-              80
-              87
-              87
-              87
-              87
+              67
+              72
+              72
+              72
+              72
             )
           end
         end
@@ -1139,10 +1097,10 @@ object Form_Main: TForm_Main
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet_DataView
         AnchorSideBottom.Side = asrBottom
-        Left = 272
-        Height = 30
-        Top = 582
-        Width = 80
+        Left = 238
+        Height = 25
+        Top = 465
+        Width = 67
         Anchors = [akRight, akBottom]
         Caption = '导出'
         OnClick = Button_Export_SGClick
@@ -1154,9 +1112,9 @@ object Form_Main: TForm_Main
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = Button_Export_SG
         Left = 0
-        Height = 32
-        Top = 581
-        Width = 272
+        Height = 39
+        Top = 458
+        Width = 238
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 2
         Text = 'StringGrid'
@@ -1167,10 +1125,10 @@ object Form_Main: TForm_Main
     AnchorSideTop.Control = Owner
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 360
-    Height = 521
+    Left = 315
+    Height = 434
     Top = 0
-    Width = 6
+    Width = 5
     Align = alNone
     Anchors = [akTop]
   end
@@ -1181,15 +1139,15 @@ object Form_Main: TForm_Main
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = TrackBar_Zone
-    Left = 366
-    Height = 621
+    Left = 320
+    Height = 483
     Top = 0
-    Width = 748
-    HorzScrollBar.Page = 504
-    VertScrollBar.Page = 464
+    Width = 754
+    HorzScrollBar.Page = 420
+    VertScrollBar.Page = 387
     Anchors = [akTop, akLeft, akRight, akBottom]
-    ClientHeight = 617
-    ClientWidth = 744
+    ClientHeight = 481
+    ClientWidth = 752
     TabOrder = 2
     object PaintBox_Net: TPaintBox
       AnchorSideLeft.Control = ScrollBox_PaintBox
@@ -1199,9 +1157,9 @@ object Form_Main: TForm_Main
       AnchorSideBottom.Control = ScrollBox_PaintBox
       AnchorSideBottom.Side = asrBottom
       Left = 0
-      Height = 464
+      Height = 387
       Top = 0
-      Width = 504
+      Width = 420
       OnPaint = PaintBox_NetPaint
     end
   end
@@ -1214,10 +1172,10 @@ object Form_Main: TForm_Main
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 366
-    Height = 28
-    Top = 621
-    Width = 748
+    Left = 320
+    Height = 48
+    Top = 483
+    Width = 754
     Max = 200
     Min = 10
     OnChange = TrackBar_ZoneChange
@@ -1226,8 +1184,8 @@ object Form_Main: TForm_Main
     TabOrder = 3
   end
   object MainMenu1: TMainMenu
-    left = 984
-    top = 376
+    Left = 820
+    Top = 313
     object MenuItem_Network: TMenuItem
       Caption = '网络'
       object MenuItem_Network_genRandom: TMenuItem

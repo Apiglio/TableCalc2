@@ -3,11 +3,12 @@ program Table_Calc_2;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, tc2_mainform, tc2_network, tc2_geojson, tc2_dialog
+  Forms, lazcontrols, tc2_mainform, tc2_network, tc2_geojson, tc2_dialog,
+  Apiglio_Useful, auf_ram_var, aufscript_frame
   { you can add units after this };
 
 {$R *.res}
