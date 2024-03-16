@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="34">
+    <Units Count="40">
       <Unit0>
         <Filename Value="Table_Calc_2.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -19,14 +19,14 @@
         <ComponentName Value="Form_Main"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="1036"/>
-        <CursorPos X="34" Y="1057"/>
+        <TopLine Value="1785"/>
+        <CursorPos X="62" Y="1790"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\..\FPC_Unit\Auf\apiglio_useful.pas"/>
+        <Filename Value="K:\FPC_Unit\Auf\apiglio_useful.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Apiglio_Useful"/>
         <EditorIndex Value="-1"/>
@@ -35,7 +35,7 @@
         <UsageCount Value="202"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\..\FPC_Unit\Auf\auf_ram_var.pas"/>
+        <Filename Value="K:\FPC_Unit\Auf\auf_ram_var.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="124"/>
@@ -43,7 +43,7 @@
         <UsageCount Value="202"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\..\FPC_Unit\Auf\aufscript_frame.pas"/>
+        <Filename Value="K:\FPC_Unit\Auf\aufscript_frame.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Frame_AufScript"/>
         <HasResources Value="True"/>
@@ -58,8 +58,8 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="1398"/>
-        <CursorPos X="20" Y="1425"/>
+        <TopLine Value="1977"/>
+        <CursorPos X="56" Y="1985"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit5>
@@ -68,7 +68,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="46" Y="8"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="173"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -78,9 +78,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="60"/>
         <CursorPos X="91" Y="82"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="89"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit7>
@@ -250,18 +249,18 @@
       <Unit30>
         <Filename Value="..\AufScript\apiglio_useful.pas"/>
         <UnitName Value="Apiglio_Useful"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="130"/>
-        <CursorPos X="11" Y="148"/>
-        <UsageCount Value="5"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="30"/>
+        <CursorPos X="36" Y="49"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\lazarus\lcl\include\font.inc"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="912"/>
         <CursorPos Y="930"/>
         <UsageCount Value="33"/>
-        <Loaded Value="True"/>
       </Unit31>
       <Unit32>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
@@ -279,127 +278,180 @@
         <CursorPos Y="9617"/>
         <UsageCount Value="10"/>
       </Unit33>
+      <Unit34>
+        <Filename Value="..\AufScript\auftype\auf_type_array.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\AufScript\auftype\auf_type_base.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\AufScript\aufkernel\kernel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\AufScript\aufkernel\svo_tree.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\AufScript\aufkernel\word_tree.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1562"/>
+        <CursorPos X="15" Y="1578"/>
+        <UsageCount Value="10"/>
+      </Unit39>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1208" Column="67" TopLine="1196"/>
+        <Caret Line="985" Column="51" TopLine="916"/>
       </Position1>
       <Position2>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1223" Column="40" TopLine="1216"/>
+        <Caret Line="1815" Column="15" TopLine="1801"/>
       </Position2>
       <Position3>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1229" Column="58" TopLine="1216"/>
+        <Caret Line="698" Column="20" TopLine="683"/>
       </Position3>
       <Position4>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1228" Column="58" TopLine="1215"/>
+        <Caret Line="1035" Column="13" TopLine="1020"/>
       </Position4>
       <Position5>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1225" Column="8" TopLine="672"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="296" Column="15" TopLine="279"/>
       </Position5>
       <Position6>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1351" Column="5" TopLine="1335"/>
+        <Caret Line="1034" Column="27" TopLine="1020"/>
       </Position6>
       <Position7>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="154" Column="56" TopLine="196"/>
+        <Caret Line="116" Column="5" TopLine="149"/>
       </Position7>
       <Position8>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1280" Column="3" TopLine="1278"/>
+        <Caret Line="1673" Column="31" TopLine="1650"/>
       </Position8>
       <Position9>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1393" Column="3" TopLine="1391"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="73" Column="9" TopLine="47"/>
       </Position9>
       <Position10>
-        <Filename Value="tc2_dialog.pas"/>
-        <Caret Line="27" Column="15" TopLine="9"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="111" Column="19" TopLine="107"/>
       </Position10>
       <Position11>
-        <Filename Value="tc2_dialog.pas"/>
-        <Caret Line="60" Column="23" TopLine="54"/>
+        <Filename Value="tc2_mainform.pas"/>
+        <Caret Line="1673" Column="40" TopLine="1651"/>
       </Position11>
       <Position12>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1445" Column="54" TopLine="1432"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="43" Column="15" TopLine="31"/>
       </Position12>
       <Position13>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1446" Column="54" TopLine="1433"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="1991" Column="15" TopLine="1973"/>
       </Position13>
       <Position14>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1453" Column="54" TopLine="1440"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="1992" Column="25" TopLine="1973"/>
       </Position14>
       <Position15>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1205" Column="3" TopLine="1251"/>
+        <Caret Line="206" Column="30" TopLine="194"/>
       </Position15>
       <Position16>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1338" TopLine="1306"/>
+        <Caret Line="2048" Column="3" TopLine="2032"/>
       </Position16>
       <Position17>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1212" Column="21" TopLine="1233"/>
+        <Caret Line="1203" Column="38" TopLine="1186"/>
       </Position17>
       <Position18>
         <Filename Value="tc2_network.pas"/>
-        <Caret Line="299" Column="22" TopLine="289"/>
+        <Caret Line="277" Column="31" TopLine="251"/>
       </Position18>
       <Position19>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1766" Column="101" TopLine="1723"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="131" Column="24" TopLine="111"/>
       </Position19>
       <Position20>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1127" Column="90" TopLine="1119"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="1176" Column="35" TopLine="1174"/>
       </Position20>
       <Position21>
         <Filename Value="tc2_network.pas"/>
-        <Caret Line="302" Column="23" TopLine="291"/>
+        <Caret Line="294" Column="27" TopLine="289"/>
       </Position21>
       <Position22>
-        <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1045" Column="55" TopLine="1030"/>
+        <Filename Value="tc2_network.pas"/>
+        <Caret Line="1032" Column="34" TopLine="1017"/>
       </Position22>
       <Position23>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1314" Column="3" TopLine="1302"/>
+        <Caret Line="1684" Column="53" TopLine="1647"/>
       </Position23>
       <Position24>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1291" Column="3" TopLine="1279"/>
+        <Caret Line="539" Column="21" TopLine="528"/>
       </Position24>
       <Position25>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1348" Column="3" TopLine="1336"/>
+        <Caret Line="1763" Column="28" TopLine="1738"/>
       </Position25>
       <Position26>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1286" Column="35" TopLine="1265"/>
+        <Caret Line="1540" Column="14" TopLine="1517"/>
       </Position26>
       <Position27>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1262" Column="51" TopLine="1231"/>
+        <Caret Line="1541" Column="43" TopLine="1517"/>
       </Position27>
       <Position28>
         <Filename Value="tc2_mainform.pas"/>
-        <Caret Line="1057" Column="34" TopLine="1036"/>
+        <Caret Line="561" Column="18" TopLine="543"/>
       </Position28>
       <Position29>
-        <Filename Value="tc2_network.pas"/>
-        <Caret Line="304" Column="14" TopLine="287"/>
+        <Filename Value="tc2_mainform.pas"/>
+        <Caret Line="2098" Column="21" TopLine="2085"/>
       </Position29>
       <Position30>
-        <Filename Value="tc2_network.pas"/>
-        <Caret Line="1426" TopLine="1397"/>
+        <Filename Value="tc2_mainform.pas"/>
+        <Caret Line="1790" Column="62" TopLine="1785"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

@@ -26,7 +26,7 @@ type
 
   TLabelTypeNode = (ltnNone, ltnID, ltnName, ltnGroup, ltnResult);
   TLabelTypeEdge = (lteNone, lteID, lteWeight, lteFrequency);
-  TLabelTypeActor = (ltaNone, ltaID, ltaName);
+  TLabelTypeActor = (ltaNone, ltaID, ltaName, ltaDisplayName);
   TLabelTypeOD = (ltoNone, ltoID, ltoDist);
 
   TScaleTypeNode = (stnNone, stnResult);
@@ -52,6 +52,7 @@ type
         Scale:double;
         ScaleType:TScaleTypeNode;
         Logarithm:boolean;
+        Max:Integer;
       end;
       ColorOption:record
         Color:TColor;
@@ -70,6 +71,7 @@ type
         Scale:double;
         ScaleType:TScaleTypeEdge;
         Logarithm:boolean;
+        Max:Integer;
       end;
       ColorOption:record
         Color:TColor;
@@ -87,6 +89,7 @@ type
         Scale:double;
         ScaleType:TScaleTypeActor;
         Logarithm:boolean;
+        Max:Integer;
       end;
       ColorOption:record
         Color:TColor;
@@ -105,6 +108,7 @@ type
         Scale:double;
         ScaleType:TScaleTypeOD;
         Logarithm:boolean;
+        Max:Integer;
       end;
       ColorOption:record
         Color:TColor;
@@ -124,6 +128,7 @@ type
   TTC2_Node=class
   public
     name:string;
+    dispname:string;
     id:integer;
     EdgesIn:TList;
     EdgesOut:TList;
@@ -167,6 +172,7 @@ type
   TTC2_Actor=class
     id:integer;
     name:string;
+    dispname:string;
     edge:TTC2_Edge;
     //nodes:array[0..1]of TTC2_Node;//没有必要，直接用edge.nodes
     distance:double;
@@ -287,7 +293,7 @@ type
 
     procedure LoadFromGeoJson(filename:string);
     procedure SaveToGeoJson(filename:string);
-    procedure LoadActorsFromGeoJson(filename:string);
+    procedure LoadActorsFromGeoJson(filename:string;dispname:string='');
 
     procedure LoadODsFromGeoJson(filename:string);
     procedure SaveODsToGeoJson(filename:string);
@@ -1167,9 +1173,9 @@ begin
   end;
 end;
 
-procedure TTC2_Network.LoadActorsFromGeoJson(filename:string);
+procedure TTC2_Network.LoadActorsFromGeoJson(filename:string;dispname:string='');
 var str:TMemoryStream;
-    jData,features,point,coord:TJSONData;
+    jData,features,point,coord,attrs,dispn:TJSONData;
     pi:integer;
     x,y:double;
     n:string;
@@ -1209,6 +1215,9 @@ begin
             latlong.y:=y;
           end;
         end;
+        attrs:=features.Items[pi].FindPath('attributes');
+        dispn:=attrs.FindPath(dispname);
+        if dispn<>nil then actor.dispname:=dispn.AsString;
       end;
   finally
     str.Free;

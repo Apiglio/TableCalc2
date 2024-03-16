@@ -552,13 +552,17 @@ end;
 procedure FuncImportActorFromGeoJson(Sender:TObject);
 var AAuf:TAuf;
     AufScpt:TAufScript;
-    name:string;
+    name,disp_name_field:string;
 begin
   AufScpt:=Sender as TAufScript;
   AAuf:=AufScpt.Auf as TAuf;
   if not AAuf.CheckArgs(2) then exit;
   if not AAuf.TryArgToString(1,name) then exit;
-  netw.LoadActorsFromGeoJson(name);
+  disp_name_field:='';
+  if AAuf.ArgsCount>2 then begin
+    if not AAuf.TryArgToString(2,disp_name_field) then exit;
+  end;
+  netw.LoadActorsFromGeoJson(name,disp_name_field);
 end;
 procedure FuncDataListExport(Sender:TObject);
 var AAuf:TAuf;
@@ -1165,7 +1169,6 @@ begin
 
   with paintOption.Node do begin
     Shown:=true;
-    SizeOption.scale:=0.5;
     LabelOption.Enabled:=false;
     LabelOption.LabelType:=ltnNone;
     LabelOption.LabelFont.Color:=clRed;
@@ -1173,6 +1176,7 @@ begin
     SizeOption.Scale:=5;
     SizeOption.ScaleType:=stnNone;
     SizeOption.Logarithm:=false;
+    SizeOption.Max:=32;
     ColorOption.Color:=clRed;
     ColorOption.ColorType:=ctnNone;
   end;
@@ -1187,6 +1191,7 @@ begin
     WidthOption.scale:=1;
     WidthOption.ScaleType:=steNone;
     WidthOption.Logarithm:=false;
+    WidthOption.Max:=10;
     ColorOption.Color:=clBlack;
     ColorOption.ColorType:=cteNone;
   end;
@@ -1197,9 +1202,10 @@ begin
     LabelOption.LabelType:=ltaNone;
     LabelOption.LabelFont.Color:=clBlue;
     LabelOption.LabelFont.Size:=8;
-    SizeOption.Scale:=5;
+    SizeOption.Scale:=8;
     SizeOption.ScaleType:=staNone;
     SizeOption.Logarithm:=false;
+    SizeOption.Max:=24;
     ColorOption.Color:=clBlue;
     ColorOption.ColorType:=ctaNone;
   end;
@@ -1214,6 +1220,7 @@ begin
     WidthOption.scale:=0.5;
     WidthOption.ScaleType:=stoNone;
     WidthOption.Logarithm:=false;
+    WidthOption.Max:=5;
     ColorOption.Color:=clGray;
     ColorOption.ColorType:=ctoNone;
   end;
@@ -1531,6 +1538,7 @@ begin
   case aOption.Actor.LabelOption.LabelType of
     ltaID:result:=IntToStr(aActor.id);
     ltaName:result:=aActor.name;
+    ltaDisplayName:result:=aActor.dispname;
     else result:='';
   end;
 end;
@@ -1550,6 +1558,7 @@ begin
     stnResult:result:=ValueToSize(aNode.CalcResult,base_value,paintOption.Node.SizeOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
+  if result>aOption.Node.SizeOption.Max then result:=aOption.Node.SizeOption.Max;
 end;
 function getEdgeScale(aEdge:TTC2_Edge;aOption:TPaintOption):integer;
 var base_value:double;
@@ -1560,6 +1569,7 @@ begin
     steFrequency:result:=ValueToSize(aEdge.frequent,base_value,paintOption.Edge.WidthOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
+  if result>aOption.Edge.WidthOption.Max then result:=aOption.Edge.WidthOption.Max;
 end;
 function getActorScale(aActor:TTC2_Actor;aOption:TPaintOption):integer;
 var base_value:double;
@@ -1569,6 +1579,7 @@ begin
     staNone:result:=ValueToSize(base_value);
     else result:=ValueToSize(base_value);
   end;
+  if result>aOption.Actor.SizeOption.Max then result:=aOption.Actor.SizeOption.Max;
 end;
 function getODScale(aOD:TTC2_ActorOD;aOption:TPaintOption):integer;
 var base_value:double;
@@ -1578,6 +1589,7 @@ begin
     stoDist:result:=ValueToSize(aOD.distance*base_value,1,paintOption.OD.WidthOption.Logarithm);
     else result:=ValueToSize(base_value);
   end;
+  if result>aOption.OD.WidthOption.Max then result:=aOption.OD.WidthOption.Max;
 end;
 
 procedure drawCanvasBox(aCanvas:TCanvas;aPoint:TPoint;aSize:integer);inline;
@@ -1775,6 +1787,7 @@ begin
   case (Sender as TRadioGroup).ItemIndex of
     1:paintOption.Actor.LabelOption.LabelType:=ltaID;
     2:paintOption.Actor.LabelOption.LabelType:=ltaName;
+    3:paintOption.Actor.LabelOption.LabelType:=ltaDisplayName;
     else paintOption.Actor.LabelOption.LabelType:=ltaNone;
   end;
   Repaint;
@@ -2083,6 +2096,7 @@ begin
     case Actor.LabelOption.LabelType of
       ltaID:RadioGroup_ActorLabelType.ItemIndex:=1;
       ltaName:RadioGroup_ActorLabelType.ItemIndex:=2;
+      ltaDisplayName:RadioGroup_ActorLabelType.ItemIndex:=3;
       else RadioGroup_ActorLabelType.ItemIndex:=0;
     end;
     FloatSpinEdit_ActorSize.Value:=Actor.SizeOption.scale;

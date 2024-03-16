@@ -30,7 +30,7 @@ object Form_Main: TForm_Main
     TabOrder = 0
     object TabSheet_AufScript: TTabSheet
       Caption = 'AufScript'
-      ClientHeight = 564
+      ClientHeight = 612
       ClientWidth = 352
       inline Frame_AufScript1: TFrame_AufScript
         AnchorSideLeft.Control = TabSheet_AufScript
@@ -39,10 +39,10 @@ object Form_Main: TForm_Main
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet_AufScript
         AnchorSideBottom.Side = asrBottom
-        Height = 564
+        Height = 612
         Width = 352
         Anchors = [akTop, akLeft, akRight, akBottom]
-        ClientHeight = 564
+        ClientHeight = 612
         ClientWidth = 352
         OnResize = Frame_AufScript1Resize
         inherited ProgressBar: TProgressBar
@@ -51,68 +51,70 @@ object Form_Main: TForm_Main
           AnchorSideBottom.Control = Frame_AufScript1
           Left = 6
           Height = 12
-          Top = 546
+          Top = 594
           Width = 340
           BorderSpacing.Left = 6
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 6
         end
         inherited Memo_out: TMemo
+          AnchorSideTop.Control = Frame_AufScript1
           AnchorSideRight.Control = Frame_AufScript1
-          Left = 80
-          Height = 458
-          Top = 42
-          Width = 266
+          Left = 206
+          Height = 542
+          Top = 6
+          Width = 140
           BorderSpacing.Top = 6
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 6
         end
         inherited Button_run: TButton
-          Left = 80
+          Left = 206
           Height = 34
-          Top = 506
+          Top = 554
           Width = 85
           BorderSpacing.Bottom = 6
           OnClick = Button_runClick
         end
         inherited Button_pause: TButton
-          Left = 171
+          Left = 234
           Height = 34
-          Top = 506
+          Top = 554
           Width = 85
           BorderSpacing.Bottom = 6
         end
         inherited Button_stop: TButton
           Left = 261
           Height = 34
-          Top = 506
+          Top = 554
           Width = 85
           BorderSpacing.Bottom = 6
         end
         inherited Button_ScriptLoad: TButton
           Left = 6
           Height = 34
-          Top = 506
+          Top = 554
           Width = 85
           BorderSpacing.Bottom = 6
         end
         inherited Button_ScriptSave: TButton
-          Left = 135
+          Left = 115
           Height = 34
-          Top = 506
+          Top = 554
           Width = 85
           BorderSpacing.Bottom = 6
         end
         inherited Memo_cmd: TSynEdit
           AnchorSideLeft.Control = Frame_AufScript1
+          AnchorSideTop.Control = Frame_AufScript1
           Left = 6
-          Height = 458
-          Top = 42
-          Width = 214
+          Height = 542
+          Top = 6
+          Width = 194
           BorderSpacing.Left = 6
           BorderSpacing.Top = 6
           BorderSpacing.Bottom = 6
-          Gutter.Width = 61
+          Gutter.Width = 59
           inherited SynLeftGutterPartList1: TSynGutterPartList
             inherited SynGutterCodeFolding1: TSynGutterCodeFolding
               AutoSize = False
@@ -120,17 +122,10 @@ object Form_Main: TForm_Main
             end
           end
         end
-        inherited TrackBar: TTrackBar
-          AnchorSideLeft.Control = Frame_AufScript1
+        inherited Splitter_Vert: TSplitter
           AnchorSideTop.Control = Frame_AufScript1
-          AnchorSideRight.Control = Frame_AufScript1
-          Left = 6
-          Height = 30
-          Top = 6
-          Width = 340
-          BorderSpacing.Left = 6
-          BorderSpacing.Top = 6
-          BorderSpacing.Right = 6
+          Left = 200
+          Height = 548
         end
       end
     end
@@ -573,6 +568,7 @@ object Form_Main: TForm_Main
               '无'
               '行动者编号'
               '行动者名称'
+              '行动者显示名'
             )
             OnClick = RadioGroup_ActorLabelTypeClick
             TabOrder = 1
