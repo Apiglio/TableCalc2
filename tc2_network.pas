@@ -272,10 +272,10 @@ type
     function FindActorIndexByName(actorname:string):integer;
 
   public
+    procedure Unweighted;
     procedure ReverseWeight;
     procedure IndirectGraphy;
     procedure IndirectWeightCheck(Sender:TObject;func:pFuncStr=nil);
-
     procedure ComplementGraphy(indirect:boolean=true);//生成补图
 
     procedure FrequencySum(is_indirect:boolean);
@@ -345,7 +345,7 @@ type
     procedure ActorEdgeUpdate(Sender:TObject;func:pFuncStr=nil);//更新行动者的最近边线
 
   public
-    procedure GetMaxMinXY(var min_x,min_y,max_x,max_y:double);
+    procedure GetMaxMinXY(out min_x,min_y,max_x,max_y:double);
 
 
   end;
@@ -757,8 +757,11 @@ begin
     end;
   result:=-1;
 end;
-
-
+procedure TTC2_Network.Unweighted;
+var idx:integer;
+begin
+  for idx:=0 to FEdgeList.Count-1 do Edges[idx].weight:=1;
+end;
 procedure TTC2_Network.ReverseWeight;
 var pi:integer;
     we:double;
@@ -1964,7 +1967,7 @@ begin
     end;
 end;
 
-procedure TTC2_Network.GetMaxMinXY(var min_x,min_y,max_x,max_y:double);
+procedure TTC2_Network.GetMaxMinXY(out min_x,min_y,max_x,max_y:double);
 var pi:integer;
     tx,ty:double;
 begin

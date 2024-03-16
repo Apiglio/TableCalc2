@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="14">
       <Unit0>
         <Filename Value="Table_Calc_2.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -96,6 +96,10 @@
         <Filename Value="..\AufScript\aufkernel\word_tree.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="..\TileMerger\tile_merger_view.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -106,7 +110,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\FPC_Unit\Auf;..\AufScript\auftype;..\AufScript\aufkernel"/>
+      <OtherUnitFiles Value="..\..\FPC_Unit\Auf;..\AufScript\auftype;..\AufScript\aufkernel;..\TileMerger"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

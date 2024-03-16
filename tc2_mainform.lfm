@@ -854,17 +854,18 @@ object Form_Main: TForm_Main
           AnchorSideRight.Side = asrBottom
           AnchorSideBottom.Side = asrBottom
           Left = 16
-          Height = 162
+          Height = 36
           Top = 1702
           Width = 290
           HorzScrollBar.Page = 120
-          VertScrollBar.Page = 138
+          VertScrollBar.Page = 32
           Anchors = [akTop, akLeft, akRight]
+          AutoSize = True
           BorderSpacing.Left = 16
           BorderSpacing.Top = 8
           BorderSpacing.Right = 16
           BorderSpacing.Bottom = 20
-          ClientHeight = 158
+          ClientHeight = 32
           ClientWidth = 286
           TabOrder = 8
           object TrackBar_Alpha: TTrackBar
@@ -885,76 +886,6 @@ object Form_Main: TForm_Main
             BorderSpacing.Top = 10
             BorderSpacing.Right = 10
             TabOrder = 0
-          end
-          object FloatSpinEditEx_Bottom: TFloatSpinEditEx
-            AnchorSideLeft.Control = ScrollBox_LayoutOption
-            AnchorSideLeft.Side = asrCenter
-            AnchorSideTop.Control = FloatSpinEditEx_Left
-            AnchorSideTop.Side = asrBottom
-            Left = 103
-            Height = 32
-            Top = 106
-            Width = 80
-            MaxLength = 0
-            TabOrder = 1
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
-            Value = 500
-          end
-          object FloatSpinEditEx_Right: TFloatSpinEditEx
-            AnchorSideLeft.Control = FloatSpinEditEx_Top
-            AnchorSideLeft.Side = asrBottom
-            AnchorSideTop.Control = FloatSpinEditEx_Top
-            AnchorSideTop.Side = asrBottom
-            Left = 183
-            Height = 32
-            Top = 74
-            Width = 80
-            MaxLength = 0
-            TabOrder = 2
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
-            Value = 500
-          end
-          object FloatSpinEditEx_Left: TFloatSpinEditEx
-            AnchorSideLeft.Control = FloatSpinEditEx_Top
-            AnchorSideTop.Control = FloatSpinEditEx_Top
-            AnchorSideTop.Side = asrBottom
-            AnchorSideRight.Control = FloatSpinEditEx_Top
-            Left = 23
-            Height = 32
-            Top = 74
-            Width = 80
-            Anchors = [akTop, akRight]
-            MaxLength = 0
-            TabOrder = 3
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
-            Value = -500
-          end
-          object FloatSpinEditEx_Top: TFloatSpinEditEx
-            AnchorSideLeft.Control = ScrollBox_LayoutOption
-            AnchorSideLeft.Side = asrCenter
-            AnchorSideTop.Control = TrackBar_Alpha
-            AnchorSideTop.Side = asrBottom
-            Left = 103
-            Height = 32
-            Top = 42
-            Width = 80
-            BorderSpacing.Top = 10
-            MaxLength = 0
-            TabOrder = 4
-            Increment = 1
-            MaxValue = 0
-            MinValue = 0
-            NullValue = 0
-            Value = -500
           end
         end
         object Button_NodeDetailedOption: TButton
@@ -1170,56 +1101,21 @@ object Form_Main: TForm_Main
     Align = alNone
     Anchors = [akTop]
   end
-  object ScrollBox_PaintBox: TScrollBox
+  object Panel_Viewer: TPanel
     AnchorSideLeft.Control = Splitter
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = TrackBar_Zone
-    Left = 366
-    Height = 621
-    Top = 0
-    Width = 748
-    HorzScrollBar.Page = 504
-    VertScrollBar.Page = 464
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    ClientHeight = 617
-    ClientWidth = 744
-    TabOrder = 2
-    object PaintBox_Net: TPaintBox
-      AnchorSideLeft.Control = ScrollBox_PaintBox
-      AnchorSideTop.Control = ScrollBox_PaintBox
-      AnchorSideRight.Control = ScrollBox_PaintBox
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ScrollBox_PaintBox
-      AnchorSideBottom.Side = asrBottom
-      Left = 0
-      Height = 464
-      Top = 0
-      Width = 504
-      OnPaint = PaintBox_NetPaint
-    end
-  end
-  object TrackBar_Zone: TTrackBar
-    AnchorSideLeft.Control = Splitter
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ScrollBox_PaintBox
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 366
-    Height = 28
-    Top = 621
+    Height = 649
+    Top = 0
     Width = 748
-    Max = 200
-    Min = 10
-    OnChange = TrackBar_ZoneChange
-    Position = 10
-    Anchors = [akLeft, akRight, akBottom]
-    TabOrder = 3
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'Panel_Viewer'
+    TabOrder = 2
   end
   object MainMenu1: TMainMenu
     left = 984
@@ -1391,6 +1287,10 @@ object Form_Main: TForm_Main
       object MenuItem_Layout_Paint: TMenuItem
         Caption = '刷新画面'
         OnClick = MenuItem_Layout_PaintClick
+      end
+      object MenuItem_Layout_World: TMenuItem
+        Caption = '全局视图'
+        OnClick = MenuItem_Layout_WorldClick
       end
     end
   end

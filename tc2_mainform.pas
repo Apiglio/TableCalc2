@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   ComCtrls, StdCtrls, Spin, Grids, Menus, LazUTF8, SpinEx, Apiglio_Useful,
-  aufscript_frame, auf_ram_var, tc2_network, Types;
+  aufscript_frame, auf_ram_var, tc2_network,
+  tile_merger_view, Types;
 
 //const NA:double=tc2_network.NA;//$7fffffffffffffff;
 
@@ -38,10 +39,6 @@ type
     Edit_ExportName: TEdit;
     FloatSpinEdit_ActorSize: TFloatSpinEdit;
     FloatSpinEdit_EdgeWidth: TFloatSpinEdit;
-    FloatSpinEditEx_Top: TFloatSpinEditEx;
-    FloatSpinEditEx_Left: TFloatSpinEditEx;
-    FloatSpinEditEx_Right: TFloatSpinEditEx;
-    FloatSpinEditEx_Bottom: TFloatSpinEditEx;
     FloatSpinEdit_ODWidth: TFloatSpinEdit;
     FloatSpinEdit_NodeSize: TFloatSpinEdit;
     Frame_AufScript1: TFrame_AufScript;
@@ -51,6 +48,7 @@ type
     Label_NodeSize: TLabel;
     Label_LayoutOpt: TLabel;
     MainMenu1: TMainMenu;
+    MenuItem_Layout_World: TMenuItem;
     MenuItem_Layout_Paint: TMenuItem;
     MenuItem_Layout_div01: TMenuItem;
     MenuItem_Network_OD_random: TMenuItem;
@@ -99,6 +97,7 @@ type
     MenuItem_Network: TMenuItem;
     MenuItem_Calc: TMenuItem;
     PageControl_DataView: TPageControl;
+    Panel_Viewer: TPanel;
     RadioGroup_ActorLabelType: TRadioGroup;
     RadioGroup_ActorScaleType: TRadioGroup;
     RadioGroup_ODLabelType: TRadioGroup;
@@ -108,12 +107,10 @@ type
     ScrollBox_PaintOption: TScrollBox;
     ScrollBox_ActorOption: TScrollBox;
     ScrollBox_ODOption: TScrollBox;
-    ScrollBox_PaintBox: TScrollBox;
     ScrollBox_LayoutOption: TScrollBox;
     ScrollBox_EdgeOption: TScrollBox;
     ScrollBox_NodeOption: TScrollBox;
     PageControl1: TPageControl;
-    PaintBox_Net: TPaintBox;
     RadioGroup_EdgeLabelType: TRadioGroup;
     RadioGroup_NodeLabelType: TRadioGroup;
     Splitter: TSplitter;
@@ -128,7 +125,6 @@ type
     TabSheet_DataView: TTabSheet;
     TabSheet_Layout: TTabSheet;
     TabSheet_AufScript: TTabSheet;
-    TrackBar_Zone: TTrackBar;
     TrackBar_Alpha: TTrackBar;
     procedure Button_ActorDetailedOptionClick(Sender: TObject);
     procedure Button_EdgeDetailedOptionClick(Sender: TObject);
@@ -158,6 +154,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Frame_AufScript1Resize(Sender: TObject);
     procedure MenuItem_Layout_PaintClick(Sender: TObject);
+    procedure MenuItem_Layout_WorldClick(Sender: TObject);
     procedure MenuItem_Network_Actor_ImportGeoJSONClick(Sender: TObject);
     procedure MenuItem_Actor_ODFrequencyClick(Sender: TObject);
     procedure MenuItem_Calc_BCClick(Sender: TObject);
@@ -185,7 +182,6 @@ type
     procedure MenuItem_Network_OD_importJSONClick(Sender: TObject);
     procedure MenuItem_Network_OD_randomClick(Sender: TObject);
     procedure MenuItem_Network_WeightReverseClick(Sender: TObject);
-    procedure PaintBox_NetPaint(Sender: TObject);
     procedure RadioGroup_ActorLabelTypeClick(Sender: TObject);
     procedure RadioGroup_ActorScaleTypeClick(Sender: TObject);
     procedure RadioGroup_EdgeLabelTypeClick(Sender: TObject);
@@ -199,7 +195,6 @@ type
     procedure StringGrid_DV_NodeEnter(Sender: TObject);
     procedure StringGrid_DV_ODEnter(Sender: TObject);
     procedure TrackBar_AlphaChange(Sender: TObject);
-    procedure TrackBar_ZoneChange(Sender: TObject);
   private
 
   public
@@ -207,8 +202,23 @@ type
 
   end;
 
+
+  { TXYViewer }
+
+  TXYViewer=class(TTileViewer)
+  public
+    PNetwork:TTC2_Network;
+  protected
+    procedure Clear; override;
+    procedure Paint; override;
+  public
+    procedure Repaint; override;
+    procedure ZoomToWorld; override;
+  end;
+
 var
   Form_Main: TForm_Main;
+  XYViewer:TXYViewer;
   netw:TTC2_Network;
   paintOption:TPaintOption;
   MenuRunError,EndingMessage:string;
@@ -794,6 +804,13 @@ begin
   netw.ReverseWeight;
   AufScpt.writeln('权重已取倒数。');
 end;
+procedure FuncUnweighted(Sender:TObject);
+var AufScpt:TAufScript;
+begin
+  AufScpt:=Sender as TAufScript;
+  netw.Unweighted;
+  AufScpt.writeln('权重已全部设置为1。');
+end;
 procedure FuncComplement(Sender:TObject);
 var AufScpt:TAufScript;
 begin
@@ -993,8 +1010,8 @@ begin
       netw.Actors[pi].pos.x:=random*800-400;
       netw.Actors[pi].pos.y:=random*800-400;
     end;
-
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.ZoomToWorld;
+  XYViewer.Repaint;
 end;
 procedure FuncLayoutLoopOrd(Sender:TObject);
 var AufScpt:TAufScript;
@@ -1013,8 +1030,8 @@ begin
       netw.Actors[p_i].pos.x:=600*cos(2*System.PI*p_i/V);
       netw.Actors[p_i].pos.y:=600*sin(2*System.PI*p_i/V);
     end;
-
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.ZoomToWorld;
+  XYViewer.Repaint;
 end;
 procedure FuncLayoutColor(Sender:TObject);
 var AufScpt:TAufScript;
@@ -1047,7 +1064,7 @@ begin
         end;
 
     end;
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.Repaint;
 end;
 procedure FuncLayoutGeo(Sender:TObject);
 var AufScpt:TAufScript;
@@ -1066,12 +1083,13 @@ begin
       pos.x:=latlong.x;
       pos.y:=latlong.y;
     end;
-
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.ZoomToWorld;
+  XYViewer.Repaint;
 end;
 procedure FuncLayoutDraw(Sender:TObject);
 begin
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.ZoomToWorld;
+  XYViewer.Repaint;
   netw.NodesToStringGrid(Form_Main.StringGrid_DV_Node);
   netw.EdgesToStringGrid(Form_Main.StringGrid_DV_Edge);
   netw.ActorsToStringGrid(Form_Main.StringGrid_DV_Actor);
@@ -1081,28 +1099,28 @@ procedure FuncLayoutNodeScaleResult(Sender:TObject);
 begin
   paintOption.Node.SizeOption.ScaleType:=stnResult;
   paintOption.Node.SizeOption.Scale:=8 / netw.GetNodeResultRange.max;
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.Repaint;
   Form_Main.UpdatePaintOptionToForm(paintOption);
 end;
 procedure FuncLayoutEdgeScaleWeight(Sender:TObject);
 begin
   paintOption.Edge.WidthOption.ScaleType:=steWeight;
   paintOption.Edge.WidthOption.Scale:=8 / netw.GetEdgeWeightRange.max;
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.Repaint;
   Form_Main.UpdatePaintOptionToForm(paintOption);
 end;
 procedure FuncLayoutEdgeScaleFrequency(Sender:TObject);
 begin
   paintOption.Edge.WidthOption.ScaleType:=steFrequency;
   paintOption.Edge.WidthOption.Scale:=8 / netw.GetEdgeFrequencyRange.max;
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.Repaint;
   Form_Main.UpdatePaintOptionToForm(paintOption);
 end;
 
 
 procedure FuncProcEnding(Sender:TObject);
 begin
-  Form_Main.PaintBox_Net.Repaint;
+  XYViewer.Repaint;
   Application.ProcessMessages;
   if EndingMessage<>'' then ShowMessage(EndingMessage+FloatToResult(GlobalResult));
   EndingMessage:='';
@@ -1136,6 +1154,7 @@ begin
   Frame_AufScript1.Auf.Script.add_func('net.removemid',@FuncRemoveMidNode,'','删除无意义的过境点');
   Frame_AufScript1.Auf.Script.add_func('net.len2weight',@FuncLengthToWeight,'','将当前布局距离作为权重');
   Frame_AufScript1.Auf.Script.add_func('net.reverseweight',@FuncReverseWeight,'','将网络权重取倒数');
+  Frame_AufScript1.Auf.Script.add_func('net.unweighted',@FuncUnweighted,'','将网络去权重');
 
   Frame_AufScript1.Auf.Script.add_func('net.complement',@FuncComplement,'','转换为补图，权重为1');
   Frame_AufScript1.Auf.Script.add_func('net.bipartite',@FuncBipartite,'','二部图检验，若为离散点则为0');
@@ -1202,6 +1221,10 @@ begin
   Frame_AufScript1.OnRunEnding:=@FuncProcEnding;
 
   netw:=TTC2_Network.Create;
+  XYViewer:=TXYViewer.Create(Self);
+  XYViewer.Parent:=Self.Panel_Viewer;
+  XYViewer.Align:=alClient;
+  XYViewer.PNetwork:=netw;
 
   paintOption:=TPaintOption.Create;
 
@@ -1278,6 +1301,12 @@ begin
   Frame_AufScript1.Memo_cmd.Clear;
   Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
   Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
+end;
+
+procedure TForm_Main.MenuItem_Layout_WorldClick(Sender: TObject);
+begin
+  XYViewer.ZoomToWorld;
+  XYViewer.Repaint;
 end;
 
 procedure TForm_Main.MenuItem_Network_Actor_ImportGeoJSONClick(Sender: TObject);
@@ -1450,7 +1479,11 @@ end;
 
 procedure TForm_Main.MenuItem_Network_disweightClick(Sender: TObject);
 begin
-  //
+  MenuRunError:='去权重错误。';
+  Frame_AufScript1.Memo_cmd.Clear;
+  Frame_AufScript1.Memo_cmd.Lines.Add('net.unweighted');
+  Frame_AufScript1.Memo_cmd.Lines.Add('lay.draw');
+  Frame_AufScript1.Auf.Script.command(Frame_AufScript1.Memo_cmd.Lines,true);
 end;
 
 procedure TForm_Main.MenuItem_Network_ExportAdjacentClick(Sender: TObject);
@@ -1664,162 +1697,6 @@ begin
     aText
   );
 end;
-
-procedure TForm_Main.PaintBox_NetPaint(Sender: TObject);
-var PB:TPaintBox;
-    pi:integer;
-    W,H,L,R,T,B,WW,HH:{integer}double;
-    n1,n2,a1,a2:TPoint;
-    node_size_value:qword;
-
-begin
-  PB:=Sender as TPaintBox;
-  if not assigned(netw) then exit;
-  if (netw.NodeCount=0) and (netw.ActorCount=0) then exit;
-
-  W:=PB.Width;
-  H:=PB.Height;
-
-  netw.GetMaxMinXY(L,T,R,B);
-
-  FloatSpinEditEx_Top.Value:=T;
-  FloatSpinEditEx_Bottom.Value:=B;
-  FloatSpinEditEx_Left.Value:=L;
-  FloatSpinEditEx_Right.Value:=R;
-  WW:=(R-L)*0.05;
-  HH:=(B-T)*0.05;
-  if WW*HH=0 then exit;
-  T:=T-HH;
-  B:=B+HH;
-  L:=L-WW;
-  R:=R+WW;
-
-  //计算更新顶点的画布坐标
-  PB.Canvas.Brush.Color:=clBlack;
-  for pi:=0 to netw.NodeCount-1 do
-    with netw.Nodes[pi] do
-      begin
-        paint_pos.x:=round((pos.x-L)/(R-L)*W);
-        paint_pos.y:=round((pos.y-T)/(B-T)*H);
-      end;
-  for pi:=0 to netw.ActorCount-1 do
-    with (netw.Actors[pi]) do
-      begin
-        paint_pos.x:=round((pos.x-L)/(R-L)*W);
-        paint_pos.y:=round((pos.y-T)/(B-T)*H);
-      end;
-
-  //绘制边线
-  IF paintOption.Edge.Shown THEN BEGIN
-    for pi:=0 to netw.EdgeCount-1 do
-      with netw.Edges[pi] do
-        begin
-          //计算坐标
-          GetArrowPoint(nodes[0].paint_pos,nodes[1].paint_pos,6,n1,n2,a1,a2);
-          //画线
-          PB.Canvas.Pen.Color:=paintOption.Edge.ColorOption.Color;
-          PB.Canvas.Pen.Width:=getEdgeScale(netw.Edges[pi],paintOption);
-          //PB.Canvas.Line(n1,n2);
-          PB.Canvas.Line(nodes[0].paint_pos,nodes[1].paint_pos);
-          //画箭头
-          if paintOption.Edge.ShowArrow then begin
-            PB.Canvas.Brush.Style:=bsSolid;
-            PB.Canvas.Brush.Color:=paintOption.Edge.ColorOption.Color;
-            PB.Canvas.Polygon([n2,a1,a2]);
-          end;
-          //标注
-          IF paintOption.Edge.LabelOption.Enabled THEN BEGIN
-            PB.Canvas.Brush.Style:=bsClear;
-            PB.Canvas.Font.Assign(paintOption.Edge.LabelOption.LabelFont);
-            drawCanvasLineText(
-              PB.Canvas,nodes[0].paint_pos,nodes[1].paint_pos,
-              getEdgeLabel(netw.Edges[pi],paintOption)
-            );
-          END;
-        end;
-  END;
-
-  //绘制OD
-  IF paintOption.OD.Shown THEN BEGIN
-    for pi:=0 to netw.ODCount-1 do
-      with netw.ODs[pi] do
-        begin
-          //计算坐标和标注数值
-          GetArrowPoint(actors[0].paint_pos,actors[1].paint_pos,6,n1,n2,a1,a2);
-          //画线
-          PB.Canvas.Pen.Color:=paintOption.OD.ColorOption.Color;
-          PB.Canvas.Pen.Width:=trunc(paintOption.OD.WidthOption.Scale);
-          PB.Canvas.Line(n1,n2);
-          //画箭头
-          if paintOption.OD.ShowArrow then begin
-            PB.Canvas.Brush.Style:=bsSolid;
-            PB.Canvas.Brush.Color:=paintOption.OD.ColorOption.Color;
-            PB.Canvas.Polygon([n2,a1,a2]);
-          end;
-          //标注
-          IF paintOption.OD.LabelOption.Enabled THEN BEGIN
-            PB.Canvas.Brush.Style:=bsClear;
-            PB.Canvas.Font.Assign(paintOption.OD.LabelOption.LabelFont);
-            drawCanvasLineText(
-              PB.Canvas,actors[0].paint_pos,actors[1].paint_pos,
-              getODLabel(netw.ODs[pi],paintOption)
-            );
-          END;
-        end;
-  END;
-
-  //绘制顶点标注
-  IF paintOption.Node.Shown THEN BEGIN
-    IF paintOption.Node.LabelOption.Enabled THEN BEGIN
-      PB.Canvas.Brush.Style:=bsClear;
-      PB.Canvas.Font.Assign(paintOption.Node.LabelOption.LabelFont);
-      for pi:=0 to netw.NodeCount-1 do
-        drawCanvasText(
-          PB.Canvas,netw.Nodes[pi].paint_pos,
-          getNodeLabel(netw.Nodes[pi],paintOption),
-        10,0);
-    END;
-  END;
-
-  //绘制顶点符号
-  IF paintOption.Node.Shown THEN BEGIN
-    PB.Canvas.Brush.Style:=bsSolid;
-    PB.Canvas.Brush.Color:=paintOption.Node.ColorOption.Color;
-    PB.Canvas.Pen.Width:=1;
-    PB.Canvas.Pen.Color:=clBlack;
-    for pi:=0 to netw.NodeCount-1 do begin
-      PB.Canvas.Brush.Color:=netw.Nodes[pi].Color;//这个color不应该在节点属性里头，后续需要剥离出来
-      node_size_value:=getNodeScale(netw.Nodes[pi],paintOption);
-      drawCanvasBox(PB.Canvas,netw.Nodes[pi].paint_pos,node_size_value);
-    end;
-  END;
-
-  //绘制行动者标注
-  IF paintOption.Actor.Shown THEN BEGIN
-    IF paintOption.Actor.LabelOption.Enabled THEN BEGIN
-      PB.Canvas.Brush.Style:=bsClear;
-      PB.Canvas.Font.Assign(paintOption.Actor.LabelOption.LabelFont);
-      for pi:=0 to netw.ActorCount-1 do
-        drawCanvasText(
-          PB.Canvas,netw.Actors[pi].paint_pos,
-          getActorLabel(netw.Actors[pi],paintOption),
-        10,0);
-    END;
-  END;
-
-  //绘制行动者符号
-  IF paintOption.Actor.Shown THEN BEGIN
-    PB.Canvas.Pen.Width:=1;
-    PB.Canvas.Pen.Color:=clBlack;
-    PB.Canvas.Brush.Style:=bsSolid;
-    PB.Canvas.Brush.Color:=paintOption.Actor.ColorOption.Color;
-    for pi:=0 to netw.ActorCount-1 do begin
-      node_size_value:=getActorScale(netw.Actors[pi],paintOption);
-      drawCanvasCircle(PB.Canvas,netw.Actors[pi].paint_pos,node_size_value);
-    end;
-  END;
-end;
-
 procedure TForm_Main.RadioGroup_ActorLabelTypeClick(Sender: TObject);
 begin
   case (Sender as TRadioGroup).ItemIndex of
@@ -1924,15 +1801,6 @@ end;
 procedure TForm_Main.TrackBar_AlphaChange(Sender: TObject);
 begin
   Self.AlphaBlendValue:=(Sender as TTrackBar).Position;
-end;
-
-procedure TForm_Main.TrackBar_ZoneChange(Sender: TObject);
-begin
-  with Sender as TTrackBar do
-    begin
-      PaintBox_Net.Width:=ScrollBox_PaintBox.Width*Position div 10;
-      PaintBox_Net.Height:=ScrollBox_PaintBox.Height*Position div 10;
-    end;
 end;
 
 procedure TForm_Main.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -2164,6 +2032,171 @@ begin
 
   Application.ProcessMessages;
 
+end;
+
+
+{ TXYViewer }
+
+
+procedure TXYViewer.Clear;
+begin
+  Canvas.Brush.Color:=clNone;
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Clear;
+end;
+
+procedure TXYViewer.Paint;
+var pi:integer;
+    n1,n2,a1,a2:TPoint;
+    node_size_value:qword;
+
+begin
+  Self.Clear;
+  if not assigned(PNetwork) then exit;
+  if (PNetwork.NodeCount=0) and (PNetwork.ActorCount=0) then exit;
+
+  //计算更新顶点的画布坐标
+  Self.Canvas.Brush.Color:=clBlack;
+  for pi:=0 to PNetwork.NodeCount-1 do
+    with PNetwork.Nodes[pi] do paint_pos:=LocatePoint(pos.x,-pos.y);
+
+  for pi:=0 to PNetwork.ActorCount-1 do
+    with (PNetwork.Actors[pi]) do paint_pos:=LocatePoint(pos.x,-pos.y);
+
+
+  //绘制边线
+  IF paintOption.Edge.Shown THEN BEGIN
+    for pi:=0 to PNetwork.EdgeCount-1 do
+      with PNetwork.Edges[pi] do
+        begin
+          //计算坐标
+          GetArrowPoint(nodes[0].paint_pos,nodes[1].paint_pos,6,n1,n2,a1,a2);
+          //画线
+          Self.Canvas.Pen.Color:=paintOption.Edge.ColorOption.Color;
+          Self.Canvas.Pen.Width:=getEdgeScale(PNetwork.Edges[pi],paintOption);
+          //Self.Canvas.Line(n1,n2);
+          Self.Canvas.Line(nodes[0].paint_pos,nodes[1].paint_pos);
+          //画箭头
+          if paintOption.Edge.ShowArrow then begin
+            Self.Canvas.Brush.Style:=bsSolid;
+            Self.Canvas.Brush.Color:=paintOption.Edge.ColorOption.Color;
+            Self.Canvas.Polygon([n2,a1,a2]);
+          end;
+          //标注
+          IF paintOption.Edge.LabelOption.Enabled THEN BEGIN
+            Self.Canvas.Brush.Style:=bsClear;
+            Self.Canvas.Font.Assign(paintOption.Edge.LabelOption.LabelFont);
+            drawCanvasLineText(
+              Self.Canvas,nodes[0].paint_pos,nodes[1].paint_pos,
+              getEdgeLabel(PNetwork.Edges[pi],paintOption)
+            );
+          END;
+        end;
+  END;
+
+  //绘制OD
+  IF paintOption.OD.Shown THEN BEGIN
+    for pi:=0 to PNetwork.ODCount-1 do
+      with PNetwork.ODs[pi] do
+        begin
+          //计算坐标和标注数值
+          GetArrowPoint(actors[0].paint_pos,actors[1].paint_pos,6,n1,n2,a1,a2);
+          //画线
+          Self.Canvas.Pen.Color:=paintOption.OD.ColorOption.Color;
+          Self.Canvas.Pen.Width:=trunc(paintOption.OD.WidthOption.Scale);
+          Self.Canvas.Line(n1,n2);
+          //画箭头
+          if paintOption.OD.ShowArrow then begin
+            Self.Canvas.Brush.Style:=bsSolid;
+            Self.Canvas.Brush.Color:=paintOption.OD.ColorOption.Color;
+            Self.Canvas.Polygon([n2,a1,a2]);
+          end;
+          //标注
+          IF paintOption.OD.LabelOption.Enabled THEN BEGIN
+            Self.Canvas.Brush.Style:=bsClear;
+            Self.Canvas.Font.Assign(paintOption.OD.LabelOption.LabelFont);
+            drawCanvasLineText(
+              Self.Canvas,actors[0].paint_pos,actors[1].paint_pos,
+              getODLabel(PNetwork.ODs[pi],paintOption)
+            );
+          END;
+        end;
+  END;
+
+  //绘制顶点标注
+  IF paintOption.Node.Shown THEN BEGIN
+    IF paintOption.Node.LabelOption.Enabled THEN BEGIN
+      Self.Canvas.Brush.Style:=bsClear;
+      Self.Canvas.Font.Assign(paintOption.Node.LabelOption.LabelFont);
+      for pi:=0 to PNetwork.NodeCount-1 do
+        drawCanvasText(
+          Self.Canvas,PNetwork.Nodes[pi].paint_pos,
+          getNodeLabel(PNetwork.Nodes[pi],paintOption),
+        10,0);
+    END;
+  END;
+
+  //绘制顶点符号
+  IF paintOption.Node.Shown THEN BEGIN
+    Self.Canvas.Brush.Style:=bsSolid;
+    Self.Canvas.Brush.Color:=paintOption.Node.ColorOption.Color;
+    Self.Canvas.Pen.Width:=1;
+    Self.Canvas.Pen.Color:=clBlack;
+    for pi:=0 to PNetwork.NodeCount-1 do begin
+      Self.Canvas.Brush.Color:=PNetwork.Nodes[pi].Color;//这个color不应该在节点属性里头，后续需要剥离出来
+      node_size_value:=getNodeScale(PNetwork.Nodes[pi],paintOption);
+      drawCanvasBox(Self.Canvas,PNetwork.Nodes[pi].paint_pos,node_size_value);
+    end;
+  END;
+
+  //绘制行动者标注
+  IF paintOption.Actor.Shown THEN BEGIN
+    IF paintOption.Actor.LabelOption.Enabled THEN BEGIN
+      Self.Canvas.Brush.Style:=bsClear;
+      Self.Canvas.Font.Assign(paintOption.Actor.LabelOption.LabelFont);
+      for pi:=0 to PNetwork.ActorCount-1 do
+        drawCanvasText(
+          Self.Canvas,PNetwork.Actors[pi].paint_pos,
+          getActorLabel(PNetwork.Actors[pi],paintOption),
+        10,0);
+    END;
+  END;
+
+  //绘制行动者符号
+  IF paintOption.Actor.Shown THEN BEGIN
+    Self.Canvas.Pen.Width:=1;
+    Self.Canvas.Pen.Color:=clBlack;
+    Self.Canvas.Brush.Style:=bsSolid;
+    Self.Canvas.Brush.Color:=paintOption.Actor.ColorOption.Color;
+    for pi:=0 to PNetwork.ActorCount-1 do begin
+      node_size_value:=getActorScale(PNetwork.Actors[pi],paintOption);
+      drawCanvasCircle(Self.Canvas,PNetwork.Actors[pi].paint_pos,node_size_value);
+    end;
+  END;
+end;
+
+procedure TXYViewer.Repaint;
+begin
+  Paint;
+end;
+
+procedure TXYViewer.ZoomToWorld;
+var x1,x2,y1,y2,w,h:double;
+begin
+  PNetwork.GetMaxMinXY(x1,y1,x2,y2);
+  w:=x2-x1;
+  h:=y2-y1;
+  if (w<=0) or (h<=0) then begin
+    CanvasLeft:=10;
+    CanvasRight:=-10;
+    CanvasTop:=10;
+    CanvasBottom:=-10;
+  end else begin
+    CanvasLeft:=x1 - round(w/10);
+    CanvasRight:=x2 + round(w/10);
+    CanvasTop:=-y1 + round(h/10);
+    CanvasBottom:=-y2 - round(h/10);
+  end;
 end;
 
 end.
