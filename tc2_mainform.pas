@@ -504,7 +504,43 @@ begin
       AufScpt.writeln('连接创建成功。');
     end;
 end;
-
+procedure FuncReadEdgeWeight(Sender:TObject);
+var AAuf:TAuf;
+    AufScpt:TAufScript;
+    index:Integer;
+    tmpEdge:TTC2_Edge;
+    weight:double;
+    arv:TAufRamVar;
+begin
+  AufScpt:=Sender as TAufScript;
+  AAuf:=AufScpt.Auf as TAuf;
+  if not AAuf.CheckArgs(3) then exit;
+  if not AAuf.TryArgToLong(1,index) then exit;
+  if not AAuf.TryArgToARV(2,8,8,[ARV_Float],arv) then exit;
+  tmpEdge:=netw.Edges[index];
+  if tmpEdge<>nil then begin
+    weight:=tmpEdge.weight;
+    double_to_arv(weight,arv);
+  end else AufScpt.writeln('找不到编号为'+IntToStr(index)+'的边线，未赋值。');
+end;
+procedure FuncEditEdgeWeight(Sender:TObject);
+var AAuf:TAuf;
+    AufScpt:TAufScript;
+    index:Integer;
+    tmpEdge:TTC2_Edge;
+    weight:double;
+    arv:TAufRamVar;
+begin
+  AufScpt:=Sender as TAufScript;
+  AAuf:=AufScpt.Auf as TAuf;
+  if not AAuf.CheckArgs(3) then exit;
+  if not AAuf.TryArgToLong(1,index) then exit;
+  if not AAuf.TryArgToDouble(2,weight) then exit;
+  tmpEdge:=netw.Edges[index];
+  if tmpEdge<>nil then begin
+    tmpEdge.weight:=weight;
+  end else AufScpt.writeln('找不到编号为'+IntToStr(index)+'的边线，未修改。');
+end;
 procedure FuncExportAdjCSV(Sender:TObject);
 var AAuf:TAuf;
     AufScpt:TAufScript;
@@ -1110,11 +1146,13 @@ begin
 
   Frame_AufScript1.Auf.Script.add_func('edge.add',@FuncAddEdge,'n1,n2[,out]','增加连接');
   Frame_AufScript1.Auf.Script.add_func('edge.addbyname',@FuncAddEdgeByName,'name1,name2','根据名称增加连接');
+  Frame_AufScript1.Auf.Script.add_func('edge.read.weight',@FuncReadEdgeWeight,'edge_id,arv','根据名称增加连接');
+  Frame_AufScript1.Auf.Script.add_func('edge.edit.weight',@FuncEditEdgeWeight,'edge_id,weight','根据名称增加连接');
 
   Frame_AufScript1.Auf.Script.add_func('actor.clear',@FuncClearActor,'','清空行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.add',@FuncAddActor,'name[,out,x,y]','增加行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.addbyname',@FuncAddActorByName,'name,x,y','根据名称增加行动者');
-  Frame_AufScript1.Auf.Script.add_func('actor.inp.json',@FuncImportActorFromGeoJson,'filename','导入GeoJson中的行动者');
+  Frame_AufScript1.Auf.Script.add_func('actor.inp.json',@FuncImportActorFromGeoJson,'filename[,dispname]','导入GeoJson中的行动者，dispname为显示名字段');
   Frame_AufScript1.Auf.Script.add_func('actor.updateedge',@FuncUpdateActorsEdge,'','根据地理位置查找每一个行动者的最近边线');
 
   Frame_AufScript1.Auf.Script.add_func('od.clear',@FuncClearOD,'','清除所有OD');
