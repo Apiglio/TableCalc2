@@ -127,6 +127,10 @@ object Form_Main: TForm_Main
           Left = 200
           Height = 548
         end
+        inherited Splitter_Horiz: TSplitter
+          AnchorSideLeft.Control = Frame_AufScript1
+          AnchorSideRight.Control = Frame_AufScript1
+        end
       end
     end
     object TabSheet_Layout: TTabSheet

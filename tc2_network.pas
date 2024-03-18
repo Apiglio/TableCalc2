@@ -1446,14 +1446,14 @@ var tmpPTR:Pointer;
     tmpEdge:TTC2_Edge;
     dist:double;
 begin
-  //s
+  //这种简陋的深度优先作法显然是不合适的，遇到环形就会锁死
 
   for tmpPTR in node.EdgesOut do
     begin
       tmpEdge:=TTC2_Edge(tmpPTR);
       if not tmpEdge.enabled then continue;//做点割边割测试时会涉及禁用边线
       if not tmpEdge.nodes[1].enabled then continue;//做点割边割测试时会涉及禁用节点
-      if tmpEdge.nodes[1].distance<node.distance+tmpEdge.weight then continue;
+      if tmpEdge.nodes[1].distance<=node.distance+tmpEdge.weight then continue;
 
       dist:=tmpEdge.nodes[0].distance+tmpEdge.weight;
       if tmpEdge.nodes[1].distance>dist then
@@ -1670,6 +1670,7 @@ begin
   //二部图识别有点麻烦
 end;
 
+// DC_i = \sum_{i \to j} {w_j}
 procedure TTC2_Network.CalcDegreeCentrality(var arr:pdouble);
 var pi,V:integer;
     tmpEdge:Pointer;
@@ -1686,13 +1687,15 @@ begin
       Nodes[pi].CalcResult:=Arr[pi];
     end;
 end;
+
+// CC_i = \frac {1} {\sum_{i \neq j}d(i,v)}
 procedure TTC2_Network.CalcClosenessCentrality(var arr:pdouble);
 var pi,V:integer;
     tmpNode:Pointer;
     we:double;
 begin
   V:=FNodeList.Count;
-  for pi:=0 to FNodeList.Count-1 do
+  for pi:=0 to V-1 do
     begin
       Arr[pi]:=0;
       GetDistance(Nodes[pi]);
@@ -1704,11 +1707,13 @@ begin
         end;
       Arr[pi]:=1/Arr[pi];
     end;
-  for pi:=0 to FNodeList.Count-1 do
+  for pi:=0 to V-1 do
     begin
       Nodes[pi].CalcResult:=Arr[pi];
     end;
 end;
+
+// IRCC = ?
 procedure TTC2_Network.CalcInfluenceRangeClosenessCentrality(var arr:pdouble);
 var pi,V,J:integer;
     tmpNode:Pointer;
@@ -1737,6 +1742,8 @@ begin
       Nodes[pi].CalcResult:=Arr[pi];
     end;
 end;
+
+// BC = ?
 procedure TTC2_Network.CalcBetweennessCentrality(var arr:pdouble);
 var pi,pj,pk,V,tmp:integer;
     tmpEdge:Pointer;

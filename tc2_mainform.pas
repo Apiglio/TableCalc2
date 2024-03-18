@@ -539,7 +539,6 @@ var AAuf:TAuf;
     index:Integer;
     tmpEdge:TTC2_Edge;
     weight:double;
-    arv:TAufRamVar;
 begin
   AufScpt:=Sender as TAufScript;
   AAuf:=AufScpt.Auf as TAuf;
@@ -550,6 +549,42 @@ begin
   if tmpEdge<>nil then begin
     tmpEdge.weight:=weight;
   end else AufScpt.writeln('找不到编号为'+IntToStr(index)+'的边线，未修改。');
+end;
+procedure FuncReadNodeResult(Sender:TObject);
+var AAuf:TAuf;
+    AufScpt:TAufScript;
+    index:Integer;
+    tmpNode:TTC2_Node;
+    calcresult:double;
+    arv:TAufRamVar;
+begin
+  AufScpt:=Sender as TAufScript;
+  AAuf:=AufScpt.Auf as TAuf;
+  if not AAuf.CheckArgs(3) then exit;
+  if not AAuf.TryArgToLong(1,index) then exit;
+  if not AAuf.TryArgToARV(2,8,8,[ARV_Float],arv) then exit;
+  tmpNode:=netw.Nodes[index];
+  if tmpNode<>nil then begin
+    calcresult:=tmpNode.CalcResult;
+    double_to_arv(calcresult,arv);
+  end else AufScpt.writeln('找不到编号为'+IntToStr(index)+'的节点，未赋值。');
+end;
+procedure FuncEditNodeResult(Sender:TObject);
+var AAuf:TAuf;
+    AufScpt:TAufScript;
+    index:Integer;
+    tmpNode:TTC2_Node;
+    calcresult:double;
+begin
+  AufScpt:=Sender as TAufScript;
+  AAuf:=AufScpt.Auf as TAuf;
+  if not AAuf.CheckArgs(3) then exit;
+  if not AAuf.TryArgToLong(1,index) then exit;
+  if not AAuf.TryArgToDouble(2,calcresult) then exit;
+  tmpNode:=netw.Nodes[index];
+  if tmpNode<>nil then begin
+    tmpNode.CalcResult:=calcresult;
+  end else AufScpt.writeln('找不到编号为'+IntToStr(index)+'的节点，未修改。');
 end;
 procedure FuncExportAdjCSV(Sender:TObject);
 var AAuf:TAuf;
@@ -899,15 +934,22 @@ procedure FuncCalcDC(Sender:TObject);
 var AufScpt:TAufScript;
     arr:pdouble;
     pi,V:integer;
+    dtmp:double;
 begin
   AufScpt:=Sender as TAufScript;
   arr:=GetMem(8*netw.NodeCount);
   netw.CalcDegreeCentrality(arr);
   V:=netw.NodeCount;
-  AufScpt.writeln('ID      DC        Name');
+  dec(V,1);
+  if V<1 then begin
+    AufScpt.writeln('警告：由于定点数不足，均一化电度中心度未能正确计算。');
+    V:=1;
+  end;
+  AufScpt.writeln('ID      DC        DC''''       Name');
   for pi:=0 to V-1 do
     begin
-      AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(Arr[pi])+'  '+netw.Nodes[pi].name);
+      dtmp:=Arr[pi];
+      AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(dtmp)+'  '+FloatToResult(dtmp/V)+'  '+netw.Nodes[pi].name);
     end;
   FreeMem(arr,8*netw.NodeCount);
 end;
@@ -915,21 +957,28 @@ procedure FuncCalcCC(Sender:TObject);
 var AufScpt:TAufScript;
     arr:pdouble;
     pi,V:integer;
+    dtmp:double;
 begin
   AufScpt:=Sender as TAufScript;
   arr:=GetMem(8*netw.NodeCount);
   try
     netw.CalcClosenessCentrality(arr);
     V:=netw.NodeCount;
-    AufScpt.writeln('ID      CC        Name');
+    dec(V,1);
+    if V<1 then begin
+      AufScpt.writeln('警告：由于定点数不足，均一化接近中心度未能正确计算。');
+      V:=1;
+    end;
+    AufScpt.writeln('ID      CC        CC''''       Name');
     for pi:=0 to V-1 do
       begin
-        AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(Arr[pi])+'  '+netw.Nodes[pi].name);
+        dtmp:=Arr[pi];
+        AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(dtmp)+'  '+FloatToResult(dtmp*V)+'  '+netw.Nodes[pi].name);
       end;
   except
+    FreeMem(arr,8*netw.NodeCount);
     AufScpt.send_error('接近中心度只适用于连通图。');
   end;
-  FreeMem(arr,8*netw.NodeCount);
 end;
 procedure FuncCalcIRCC(Sender:TObject);
 var AufScpt:TAufScript;
@@ -947,9 +996,9 @@ begin
         AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(Arr[pi])+'  '+netw.Nodes[pi].name);
       end;
   except
+    FreeMem(arr,8*netw.NodeCount);
     AufScpt.send_error('未知错误。');
   end;
-  FreeMem(arr,8*netw.NodeCount);
 end;
 procedure FuncCalcBC(Sender:TObject);
 var AufScpt:TAufScript;
@@ -966,7 +1015,6 @@ begin
     begin
       AufScpt.writeln(Usf.left_adjust(IntToStr(pi),6,6)+'  '+FloatToResult(Arr[pi])+'  '+netw.Nodes[pi].name);
     end;
-
   FreeMem(arr,8*netw.NodeCount);
 end;
 
@@ -1162,11 +1210,13 @@ begin
 
   Frame_AufScript1.Auf.Script.add_func('node.add',@FuncAddNode,'name[,out,x,y]','增加节点');
   Frame_AufScript1.Auf.Script.add_func('node.addbyname',@FuncAddNodeByName,'name,x,y','根据名称增加节点');
+  Frame_AufScript1.Auf.Script.add_func('node.read.result',@FuncReadNodeResult,'node_id,arv','根据节点id返回权重值');
+  Frame_AufScript1.Auf.Script.add_func('node.edit.result',@FuncEditNodeResult,'node_id,value','根据节点id修改权重值');
 
   Frame_AufScript1.Auf.Script.add_func('edge.add',@FuncAddEdge,'n1,n2[,out]','增加连接');
   Frame_AufScript1.Auf.Script.add_func('edge.addbyname',@FuncAddEdgeByName,'name1,name2','根据名称增加连接');
-  Frame_AufScript1.Auf.Script.add_func('edge.read.weight',@FuncReadEdgeWeight,'edge_id,arv','根据名称增加连接');
-  Frame_AufScript1.Auf.Script.add_func('edge.edit.weight',@FuncEditEdgeWeight,'edge_id,weight','根据名称增加连接');
+  Frame_AufScript1.Auf.Script.add_func('edge.read.weight',@FuncReadEdgeWeight,'edge_id,arv','根据边线id返回权重值');
+  Frame_AufScript1.Auf.Script.add_func('edge.edit.weight',@FuncEditEdgeWeight,'edge_id,weight','根据边线id修改权重值');
 
   Frame_AufScript1.Auf.Script.add_func('actor.clear',@FuncClearActor,'','清空行动者');
   Frame_AufScript1.Auf.Script.add_func('actor.add',@FuncAddActor,'name[,out,x,y]','增加行动者');
@@ -1219,6 +1269,7 @@ begin
   Frame_AufScript1.Auf.Script.PSW.run_parameter.error_raise:=true;
 
   Frame_AufScript1.OnRunEnding:=@FuncProcEnding;
+  Frame_AufScript1.Portrait:=true;
 
   netw:=TTC2_Network.Create;
   XYViewer:=TXYViewer.Create(Self);
