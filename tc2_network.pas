@@ -1219,8 +1219,12 @@ begin
           end;
         end;
         attrs:=features.Items[pi].FindPath('attributes');
-        dispn:=attrs.FindPath(dispname);
-        if dispn<>nil then actor.dispname:=dispn.AsString;
+        if dispname='' then begin
+          actor.dispname:=n;
+        end else begin
+          dispn:=attrs.FindPath(dispname);
+          if dispn<>nil then actor.dispname:=dispn.AsString;
+        end;
       end;
   finally
     str.Free;
@@ -1926,21 +1930,25 @@ var pi,pj:integer;
       if len=0 then exit;
       d1:=sqrt(sqr(n1_x-actor_x)+sqr(n1_y-actor_y));
       d2:=sqrt(sqr(n2_x-actor_x)+sqr(n2_y-actor_y));
-      p:=(len+d1+d2)/2;
-      s:=sqrt(p*(p-len)*(p-d1)*(p-d2));
-      cos1:=(sqr(d1)+sqr(len)-sqr(d2))/d1/len/2;
-      cos2:=(sqr(d2)+sqr(len)-sqr(d1))/d2/len/2;
+      if d1*d2<>0 then begin
+        p:=(len+d1+d2)/2;
+        s:=sqrt(p*(p-len)*(p-d1)*(p-d2));
+        cos1:=(sqr(d1)+sqr(len)-sqr(d2))/d1/len/2;
+        cos2:=(sqr(d2)+sqr(len)-sqr(d1))/d2/len/2;
 
-      if (cos1>0) and (cos2>0) then
-        begin
-          result:=2*s/len;
-        end
-      else
-        begin
-          result:=d1;
-          if d2<result then result:=d2;
-        end;
-
+        if (cos1>0) and (cos2>0) then
+          begin
+            result:=2*s/len;
+          end
+        else
+          begin
+            result:=d1;
+            if d2<result then result:=d2;
+          end;
+      end else begin
+        result:=d1;
+        //这个地方粗暴地将点与边线重合的情况归为边线起点，应该在之后计算边线内距离时重新梳理逻辑
+      end;
       get_dist_result[0]:=0;//暂时不计算边内距离
       get_dist_result[1]:=0;//暂时不计算边内距离
 
